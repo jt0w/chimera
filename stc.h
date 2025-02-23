@@ -15,9 +15,11 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #ifdef STC_STRIP_PREFIX
   #define todo stc_todo
+  #define log stc_log
   #define shift stc_shift
   #define da_len stc_da_len
   #define da_get stc_da_get
@@ -27,7 +29,6 @@
   #define LogLevel STC_LogLevel
   #define StringBuilder STC_StringBuilder
   #define Cmd STC_Cmd
-  #define cmd_append stc_cmd_append
   #define cmd_exec stc_cmd_exec
 #endif
 
@@ -41,7 +42,6 @@
 #define stc_todo(reason) (fprintf(stderr, "TODO: %s\n", reason), exit(1))
 
 #define stc_shift(xs, xs_sz) (assert(xs_sz > 0), xs_sz--, *xs++)
-#define stc_log(log_level, fmt, ...) stc_log(log_level, fmt, ...)
 
 #define stc_da_len(da) (sizeof(da) / sizeof(da[0]))
 #define stc_da_get(da, i) (assert(i < stc_da_len(da)), da[i])
@@ -56,14 +56,14 @@
     (da)->items[(da)->count++] = (item);                                  \
   } while (0)                                                             \
 
-#define stc_da_push_buf(da, buf, buf_sz)  \
-  do {                                    \
-    for (int i = 0; i < buf_sz; ++i) {    \
-       stc_da_push(da, buf[i]);           \
-    }                                     \
-  } while(0)                              \
+#define stc_da_push_sized_buf(da, buf, buf_sz)  \
+  do {                                          \
+    for (int i = 0; i < buf_sz; ++i) {          \
+       stc_da_push(da, buf[i]);                 \
+    }                                           \
+  } while(0)                                    \
 
-#define stc_da_push_many(da, buf) stc_da_push_buf(da, buf, strlen(buf))
+#define stc_da_push_buf(da, buf) stc_da_push_sized_buf(da, buf, strlen(buf))
 
 typedef struct {
   char *items;
@@ -74,25 +74,47 @@ typedef struct {
 typedef STC_StringBuilder STC_Cmd;
 
 typedef enum {
-  LOG_INFO,
-  LOG_WARN,
-  LOG_ERROR,
-  LOG_TRACE
+  STC_INFO,
+  STC_WARN,
+  STC_ERROR,
+  STC_TRACE
 } STC_LogLevel;
 
+void stc_log(STC_LogLevel log_level, const char* fmt, ...);
 
 #ifdef STC_IMPLEMENTATION
 void stc_log(STC_LogLevel log_level, const char *fmt, ...) {
-  STC_StringBuilder sb;
-}
-void stc_cmd_append(STC_Cmd *cmd, const char *str) {
-  stc_da_push_many(cmd, str);
-  stc_da_push(cmd, ' ');
+  FILE* out = stdout;
+  switch (log_level) {
+    case STC_INFO:
+      fprintf(out, "[INFO]: ");
+      break;
+    case STC_WARN:
+      fprintf(out, "[WARN]: ");
+      break;
+    case STC_ERROR:
+      out = stderr;
+      fprintf(out, "[ERROR]: ");
+      break;
+    case STC_TRACE:
+      out = stderr;
+      fprintf(out, "[TRACE]: ");
+      break;
+  }
+
+  va_list args;
+  va_start(args, fmt);
+  vfprintf(out, fmt, args);
+  va_end(args);
+
+  fprintf(out, "\n");
 }
 
 int stc_cmd_exec(STC_Cmd *cmd){
+  log(STC_INFO, "+ %s", cmd->items);
   return system(cmd->items);
 }
 
 #endif // END STC_IMPLEMTATION
+
 #endif // END _STC_H_
