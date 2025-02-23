@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     StringBuilder sb = {0};
     while (argc > 0) {
       char *arg = shift(argv, argc);
-      da_push_buf(&sb, arg, strlen(arg));
+      da_push_buf(&sb, arg);
     }
     printf("Got %zu bytes of args\n", sb.count);
     valid_cmd = true;
@@ -39,11 +39,11 @@ int main(int argc, char **argv) {
 
   if (strcmp(subcmd, "build") == 0) {
     Cmd cmd = {0};
-    cmd_append(&cmd, "gcc");
-    cmd_append(&cmd, "-ggdb");
-    cmd_append(&cmd, "-o");
-    cmd_append(&cmd, "showcase");
-    cmd_append(&cmd, __FILE__);
+    da_push_buf(&cmd, "gcc ");
+    da_push_buf(&cmd, "-ggdb ");
+    da_push_buf(&cmd, "-o ");
+    da_push_buf(&cmd, "showcase ");
+    da_push_buf(&cmd, __FILE__);
     int res = cmd_exec(&cmd);
     if (res != 0) {
       fprintf(stderr, "ERROR: Could not build %s\n", __FILE__);
