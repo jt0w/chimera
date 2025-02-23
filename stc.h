@@ -23,8 +23,12 @@
   #define da_get stc_da_get
   #define da_push stc_da_push
   #define da_push_buf stc_da_push_buf
+  #define da_push_many stc_da_push_many
   #define LogLevel STC_LogLevel
   #define StringBuilder STC_StringBuilder
+  #define Cmd STC_Cmd
+  #define cmd_append stc_cmd_append
+  #define cmd_exec stc_cmd_exec
 #endif
 
 #ifndef STC_INIT_DA_CAP
@@ -59,11 +63,15 @@
     }                                     \
   } while(0)                              \
 
+#define stc_da_push_many(da, buf) stc_da_push_buf(da, buf, strlen(buf))
+
 typedef struct {
   char *items;
   size_t count;
   size_t cap;
 } STC_StringBuilder;
+
+typedef STC_StringBuilder STC_Cmd;
 
 typedef enum {
   LOG_INFO,
@@ -73,9 +81,18 @@ typedef enum {
 } STC_LogLevel;
 
 
-#ifdef STC_IMPLEMTATION
+#ifdef STC_IMPLEMENTATION
 void stc_log(STC_LogLevel log_level, const char *fmt, ...) {
   STC_StringBuilder sb;
 }
+void stc_cmd_append(STC_Cmd *cmd, const char *str) {
+  stc_da_push_many(cmd, str);
+  stc_da_push(cmd, ' ');
+}
+
+int stc_cmd_exec(STC_Cmd *cmd){
+  return system(cmd->items);
+}
+
 #endif // END STC_IMPLEMTATION
 #endif // END _STC_H_
