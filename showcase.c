@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
   if (argc < 1) {
     printf("Usage: <%s> <subcmd>\n", program_name);
     printf("To get a list of available subcommands use the subcommand `list`\n");
-    fprintf(stderr, "Error: not enought args\n");
+    fprintf(stderr, "Error: not enough args\n");
     return 1;
   }
   char *subcmd = shift(argv, argc);
