@@ -17,6 +17,7 @@
 #include <string.h>
 
 #ifdef STC_STRIP_PREFIX
+  #define todo stc_todo
   #define shift stc_shift
   #define da_len stc_da_len
   #define da_get stc_da_get
