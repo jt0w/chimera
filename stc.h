@@ -97,8 +97,6 @@ typedef struct {
       ((const char*[]){__VA_ARGS__}),                              \
       (sizeof((const char*[]){__VA_ARGS__})/sizeof(const char*))); \
 
-
-
 typedef enum {
   STC_INFO,
   STC_WARN,
