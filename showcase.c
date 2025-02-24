@@ -7,22 +7,8 @@
 #define STC_IMPLEMENTATION
 #include "stc.h"
 
-#define a(da, bufs, bufs_c)                                               \
-  do {                                                                     \
-    if ((da)->count + bufs_c > (da)->cap) {                                \
-      if ((da)->cap == 0) {                                                \
-        (da)->cap = 256;                                                   \
-      }                                                                    \
-      while ((da)->count + bufs_c > (da)->cap) {                           \
-        (da)->cap *= 2;                                                    \
-      }                                                                    \
-      (da)->items = realloc((da)->items, (da)->cap*sizeof(*(da)->items));  \
-    }                                                                      \
-    memcpy((da)->items, (bufs), (bufs_c)*sizeof(*(da)->items));            \
-    (da)->count += (bufs_c);                                               \
-  } while (0)
-
 int main(int argc, char **argv) {
+  stc_rebuild_file(argv, argc);
   char *program_name = shift(argv, argc);
   if (argc < 1) {
     printf("Usage: <%s> <subcmd>\n", program_name);
@@ -36,9 +22,9 @@ int main(int argc, char **argv) {
 
   if (strcmp(subcmd, "list") == 0) {
     printf("Here a list of all subcommands:\n");
-    printf("    list    ->  Print a list of all subcmds\n");
-    printf("    da      ->  Add all following args to a dynamic array and print each one of those\n");
-    printf("    build   ->  Build an example application using stc\n");
+    printf("    list             ->  Print a list of all subcmds\n");
+    printf("    da               ->  Add all following args to a dynamic array and print each one of those\n");
+    printf("    build <file.c>   ->  Build a c file\n");
     valid_cmd = true;
   }
 
@@ -53,16 +39,11 @@ int main(int argc, char **argv) {
   }
 
   if (strcmp(subcmd, "build") == 0) {
+    char *file = shift(argv, argc);
     Cmd cmd = {0};
     cmd_push(&cmd, "gcc");
-    cmd_push(&cmd, "-o", "showcase");
-    cmd_push(&cmd, "-ggdb");
-    cmd_push(&cmd, "showcase.c");
-    int res = cmd_exec(&cmd);
-    if (res != 0) {
-      fprintf(stderr, "ERROR: Could not build %s\n", __FILE__);
-      return res;
-    }
+    cmd_push(&cmd, file);
+    if (cmd_exec(&cmd) != 0) return 1;
     valid_cmd = true;
   }
 

@@ -29,10 +29,15 @@
   #define Cmd STC_Cmd
   #define cmd_push stc_cmd_push
   #define cmd_exec stc_cmd_exec
+  #define stc_rebuild_file rebuild_file
 #endif
 
 #ifndef STC_INIT_DA_CAP
 #define STC_INIT_DA_CAP 256
+#endif
+
+#ifndef STC_COMPILER
+#define STC_COMPILER "gcc"
 #endif
 
 #define STC_SUCCESS 1
@@ -41,6 +46,8 @@
 #define stc_todo(reason) (fprintf(stderr, "TODO: %s\n", reason), exit(1))
 
 #define stc_shift(xs, xs_sz) (assert(xs_sz > 0), xs_sz--, *xs++)
+
+#define stc_rebuild_file(argv, argc) stc__rebuild_file(argv, argc, __FILE__)
 
 #define stc_da_len(da) (sizeof(da) / sizeof(da[0]))
 #define stc_da_get(da, i) (assert(i < stc_da_len(da)), da[i])
@@ -85,7 +92,8 @@ typedef struct {
   size_t count;
   size_t cap;
 } STC_StringBuilder;
-
+static inline STC_StringBuilder sb_from_string(char *str);
+ 
 typedef struct {
   char **items;
   size_t count;
@@ -134,6 +142,13 @@ void stc_log(STC_LogLevel log_level, const char *fmt, ...) {
   fprintf(out, "\n");
 }
 
+static inline STC_StringBuilder sb_from_string(char *str) {
+  return (STC_StringBuilder) {
+    .items = str,
+    .count = strlen(str),
+  };
+}
+
 int stc_cmd_exec(STC_Cmd *cmd){
   STC_StringBuilder sb = {0};
   while (cmd->count > 0) {
@@ -143,6 +158,17 @@ int stc_cmd_exec(STC_Cmd *cmd){
   }
   log(STC_INFO, "+ %s", sb.items);
   return system(sb.items);
+}
+
+void stc__rebuild_file(char **argv, int argc, const char* filename) {
+  const char *bin_path = stc_shift(argv, argc);
+
+  STC_Cmd cmd = {0};
+  stc_cmd_push(&cmd, STC_COMPILER, filename, "-o", bin_path);
+  if (stc_cmd_exec(&cmd) != 0) {
+    stc_log(STC_ERROR, " Failed while building %s", filename);
+    exit(0);
+  }
 }
 
 #endif // END STC_IMPLEMTATION
