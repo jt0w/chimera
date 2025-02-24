@@ -64,20 +64,20 @@
 
 #define stc_da_push_buf(da, buf) stc_da_push_sized_buf(da, buf, strlen(buf))
 
-#define stc_da_push_mult(da, bufs, bufs_c)                                               \
-  do {                                                                     \
-    if ((da)->count + bufs_c > (da)->cap) {                                \
-      if ((da)->cap == 0) {                                                \
-        (da)->cap = STC_INIT_DA_CAP;                                                   \
-      }                                                                    \
-      while ((da)->count + bufs_c > (da)->cap) {                           \
-        (da)->cap *= 2;                                                    \
-      }                                                                    \
-      (da)->items = realloc((da)->items, (da)->cap*sizeof(*(da)->items));  \
-      assert((da)->items != NULL);\
-    }                                                                      \
-    memcpy((da)->items + (da)->count, (bufs), (bufs_c)*sizeof(*(da)->items));            \
-    (da)->count += (bufs_c);                                               \
+#define stc_da_push_mult(da, bufs, bufs_c)                                    \
+  do {                                                                        \
+    if ((da)->count + bufs_c > (da)->cap) {                                   \
+      if ((da)->cap == 0) {                                                   \
+        (da)->cap = STC_INIT_DA_CAP;                                          \
+      }                                                                       \
+      while ((da)->count + bufs_c > (da)->cap) {                              \
+        (da)->cap *= 2;                                                       \
+      }                                                                       \
+      (da)->items = realloc((da)->items, (da)->cap*sizeof(*(da)->items));     \
+      assert((da)->items != NULL);                                            \
+    }                                                                         \
+    memcpy((da)->items + (da)->count, (bufs), (bufs_c)*sizeof(*(da)->items)); \
+    (da)->count += (bufs_c);                                                  \
   } while (0)
 
 typedef struct {
