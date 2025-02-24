@@ -6,8 +6,6 @@
 //  size_t cap;
 // } Some_Da;
 // Example implemenations can be found when in STC_StringBuilder (just search here in this file).
-
-
 #ifndef _STC_H_
 #define _STC_H_
 #include <assert.h>
@@ -29,6 +27,7 @@
   #define LogLevel STC_LogLevel
   #define StringBuilder STC_StringBuilder
   #define Cmd STC_Cmd
+  #define cmd_push stc_cmd_push
   #define cmd_exec stc_cmd_exec
 #endif
 
@@ -65,13 +64,40 @@
 
 #define stc_da_push_buf(da, buf) stc_da_push_sized_buf(da, buf, strlen(buf))
 
+#define stc_da_push_mult(da, bufs, bufs_c)                                               \
+  do {                                                                     \
+    if ((da)->count + bufs_c > (da)->cap) {                                \
+      if ((da)->cap == 0) {                                                \
+        (da)->cap = STC_INIT_DA_CAP;                                                   \
+      }                                                                    \
+      while ((da)->count + bufs_c > (da)->cap) {                           \
+        (da)->cap *= 2;                                                    \
+      }                                                                    \
+      (da)->items = realloc((da)->items, (da)->cap*sizeof(*(da)->items));  \
+      assert((da)->items != NULL);\
+    }                                                                      \
+    memcpy((da)->items + (da)->count, (bufs), (bufs_c)*sizeof(*(da)->items));            \
+    (da)->count += (bufs_c);                                               \
+  } while (0)
+
 typedef struct {
   char *items;
   size_t count;
   size_t cap;
 } STC_StringBuilder;
 
-typedef STC_StringBuilder STC_Cmd;
+typedef struct {
+  char **items;
+  size_t count;
+  size_t cap;
+} STC_Cmd;
+
+#define stc_cmd_push(cmd, ...)                                     \
+  stc_da_push_mult(cmd,                                            \
+      ((const char*[]){__VA_ARGS__}),                              \
+      (sizeof((const char*[]){__VA_ARGS__})/sizeof(const char*))); \
+
+
 
 typedef enum {
   STC_INFO,
@@ -111,10 +137,15 @@ void stc_log(STC_LogLevel log_level, const char *fmt, ...) {
 }
 
 int stc_cmd_exec(STC_Cmd *cmd){
-  log(STC_INFO, "+ %s", cmd->items);
-  return system(cmd->items);
+  STC_StringBuilder sb = {0};
+  while (cmd->count > 0) {
+    char *string = stc_shift(cmd->items, cmd->count);
+    stc_da_push_buf(&sb, string);
+    stc_da_push(&sb, ' ');
+  }
+  log(STC_INFO, "+ %s", sb.items);
+  return system(sb.items);
 }
 
 #endif // END STC_IMPLEMTATION
-
 #endif // END _STC_H_

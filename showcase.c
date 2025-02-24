@@ -7,6 +7,21 @@
 #define STC_IMPLEMENTATION
 #include "stc.h"
 
+#define a(da, bufs, bufs_c)                                               \
+  do {                                                                     \
+    if ((da)->count + bufs_c > (da)->cap) {                                \
+      if ((da)->cap == 0) {                                                \
+        (da)->cap = 256;                                                   \
+      }                                                                    \
+      while ((da)->count + bufs_c > (da)->cap) {                           \
+        (da)->cap *= 2;                                                    \
+      }                                                                    \
+      (da)->items = realloc((da)->items, (da)->cap*sizeof(*(da)->items));  \
+    }                                                                      \
+    memcpy((da)->items, (bufs), (bufs_c)*sizeof(*(da)->items));            \
+    (da)->count += (bufs_c);                                               \
+  } while (0)
+
 int main(int argc, char **argv) {
   char *program_name = shift(argv, argc);
   if (argc < 1) {
@@ -39,11 +54,10 @@ int main(int argc, char **argv) {
 
   if (strcmp(subcmd, "build") == 0) {
     Cmd cmd = {0};
-    da_push_buf(&cmd, "gcc ");
-    da_push_buf(&cmd, "-ggdb ");
-    da_push_buf(&cmd, "-o ");
-    da_push_buf(&cmd, "showcase ");
-    da_push_buf(&cmd, __FILE__);
+    cmd_push(&cmd, "gcc");
+    cmd_push(&cmd, "-o", "showcase");
+    cmd_push(&cmd, "-ggdb");
+    cmd_push(&cmd, "showcase.c");
     int res = cmd_exec(&cmd);
     if (res != 0) {
       fprintf(stderr, "ERROR: Could not build %s\n", __FILE__);
