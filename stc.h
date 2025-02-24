@@ -29,7 +29,7 @@
   #define Cmd STC_Cmd
   #define cmd_push stc_cmd_push
   #define cmd_exec stc_cmd_exec
-  #define stc_rebuild_file rebuild_file
+  #define rebuild_file stc_rebuild_file 
 #endif
 
 #ifndef STC_INIT_DA_CAP
