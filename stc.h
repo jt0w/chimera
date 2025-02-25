@@ -14,6 +14,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #ifdef STC_STRIP_PREFIX
     #define todo stc_todo
@@ -163,12 +166,27 @@ int stc_cmd_exec(Stc_Cmd *cmd){
 void stc__rebuild_file(char **argv, int argc, const char* filename) {
     const char *bin_path = stc_shift(argv, argc);
 
+    struct stat buffer;
+
+    stat(bin_path, &buffer);
+    int long bin_mtime = buffer.st_mtime;
+
+    stat(filename, &buffer);
+    int long file_mtime = buffer.st_mtime;
+    if(!(file_mtime > bin_mtime)) return;
+
     Stc_Cmd cmd = {0};
     stc_cmd_push(&cmd, STC_COMPILER, filename, "-o", bin_path);
     if (stc_cmd_exec(&cmd) != 0) {
         stc_log(STC_ERROR, " Failed while building %s", filename);
         exit(0);
     }
+    cmd.count = 0;
+    stc_cmd_push(&cmd, bin_path);
+    while (argc > 0) {
+        stc_cmd_push(&cmd, stc_shift(argv, argc));
+    }
+    exit(stc_cmd_exec(&cmd) / 256);
 }
 
 #endif // END STC_IMPLEMTATION
