@@ -8,7 +8,7 @@
 #include "stc.h"
 
 int main(int argc, char **argv) {
-  stc_rebuild_file(argv, argc);
+  rebuild_file(argv, argc);
   char *program_name = shift(argv, argc);
   if (argc < 1) {
     printf("Usage: <%s> <subcmd>\n", program_name);

@@ -5,7 +5,7 @@
 //  size_t size;
 //  size_t cap;
 // } Some_Da;
-// Example implemenations can be found when in STC_StringBuilder (just search here in this file).
+// Example implemenations can be found when in Stc_StringBuilder (just search here in this file).
 #ifndef _STC_H_
 #define _STC_H_
 #include <assert.h>
@@ -24,9 +24,9 @@
   #define da_push stc_da_push
   #define da_push_buf stc_da_push_buf
   #define da_push_many stc_da_push_many
-  #define LogLevel STC_LogLevel
-  #define StringBuilder STC_StringBuilder
-  #define Cmd STC_Cmd
+  #define LogLevel Stc_LogLevel
+  #define StringBuilder Stc_StringBuilder
+  #define Cmd Stc_Cmd
   #define cmd_push stc_cmd_push
   #define cmd_exec stc_cmd_exec
   #define rebuild_file stc_rebuild_file 
@@ -91,14 +91,14 @@ typedef struct {
   char *items;
   size_t count;
   size_t cap;
-} STC_StringBuilder;
-static inline STC_StringBuilder sb_from_string(char *str);
+} Stc_StringBuilder;
+static inline Stc_StringBuilder sb_from_string(char *str);
  
 typedef struct {
   char **items;
   size_t count;
   size_t cap;
-} STC_Cmd;
+} Stc_Cmd;
 
 #define stc_cmd_push(cmd, ...)                                     \
   stc_da_push_mult(cmd,                                            \
@@ -110,12 +110,12 @@ typedef enum {
   STC_WARN,
   STC_ERROR,
   STC_TRACE
-} STC_LogLevel;
+} Stc_LogLevel;
 
-void stc_log(STC_LogLevel log_level, const char* fmt, ...);
+void stc_log(Stc_LogLevel log_level, const char* fmt, ...);
 
 #ifdef STC_IMPLEMENTATION
-void stc_log(STC_LogLevel log_level, const char *fmt, ...) {
+void stc_log(Stc_LogLevel log_level, const char *fmt, ...) {
   FILE* out = stdout;
   switch (log_level) {
     case STC_INFO:
@@ -142,15 +142,15 @@ void stc_log(STC_LogLevel log_level, const char *fmt, ...) {
   fprintf(out, "\n");
 }
 
-static inline STC_StringBuilder sb_from_string(char *str) {
-  return (STC_StringBuilder) {
+static inline Stc_StringBuilder sb_from_string(char *str) {
+  return (Stc_StringBuilder) {
     .items = str,
     .count = strlen(str),
   };
 }
 
-int stc_cmd_exec(STC_Cmd *cmd){
-  STC_StringBuilder sb = {0};
+int stc_cmd_exec(Stc_Cmd *cmd){
+  Stc_StringBuilder sb = {0};
   while (cmd->count > 0) {
     char *string = stc_shift(cmd->items, cmd->count);
     stc_da_push_buf(&sb, string);
@@ -163,7 +163,7 @@ int stc_cmd_exec(STC_Cmd *cmd){
 void stc__rebuild_file(char **argv, int argc, const char* filename) {
   const char *bin_path = stc_shift(argv, argc);
 
-  STC_Cmd cmd = {0};
+  Stc_Cmd cmd = {0};
   stc_cmd_push(&cmd, STC_COMPILER, filename, "-o", bin_path);
   if (stc_cmd_exec(&cmd) != 0) {
     stc_log(STC_ERROR, " Failed while building %s", filename);
