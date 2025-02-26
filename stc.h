@@ -193,7 +193,7 @@ void stc__rebuild_file(char **argv, int argc, const char* filename) {
 void stc_read_file(char *filename, Stc_StringBuilder *sb) {
     FILE *f = fopen(filename, "r");
     if (f == NULL) {
-        stc_log(STC_ERROR, "´%s´ could not be opened");
+        stc_log(STC_ERROR, "´%s´ could not be opened", filename);
         exit(1);
     }
     char c;
