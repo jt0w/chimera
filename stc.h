@@ -33,6 +33,7 @@
     #define cmd_push stc_cmd_push
     #define cmd_exec stc_cmd_exec
     #define rebuild_file stc_rebuild_file 
+    #define read_file stc_read_file 
 #endif
 
 #ifndef STC_INIT_DA_CAP
@@ -116,7 +117,7 @@ typedef enum {
 } Stc_LogLevel;
 
 void stc_log(Stc_LogLevel log_level, const char* fmt, ...);
-
+void stc_read_file(char* filename, Stc_StringBuilder *sb);
 #ifdef STC_IMPLEMENTATION
 void stc_log(Stc_LogLevel log_level, const char *fmt, ...) {
     FILE* out = stdout;
@@ -187,6 +188,19 @@ void stc__rebuild_file(char **argv, int argc, const char* filename) {
         stc_cmd_push(&cmd, stc_shift(argv, argc));
     }
     exit(stc_cmd_exec(&cmd) / 256);
+}
+
+void stc_read_file(char *filename, Stc_StringBuilder *sb) {
+    FILE *f = fopen(filename, "r");
+    if (f == NULL) {
+        stc_log(STC_ERROR, "´%s´ could not be opened");
+        exit(1);
+    }
+    char c;
+    while ((c = fgetc(f)) != EOF) {
+        stc_da_push(sb, c);
+    }
+    fclose(f);
 }
 
 #endif // END STC_IMPLEMTATION

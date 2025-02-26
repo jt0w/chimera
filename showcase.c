@@ -25,7 +25,8 @@ int main(int argc, char **argv) {
         printf("    list             ->  Print a list of all subcmds\n");
         printf("    da               ->  Add all following args to a dynamic array and print each one of those\n");
         printf("    build <file.c>   ->  Build a c file\n");
-        printf("    time <file>      ->  Get Timestamp of file\n");
+        printf("    time <file>      ->  Get Timestamp of a file\n");
+        printf("    read <file>      ->  Read the contents of a file\n");
         valid_cmd = true;
     }
 
@@ -54,6 +55,15 @@ int main(int argc, char **argv) {
         int         status;
         status = stat(file, &buffer);
         printf("st_mtime => %ld", buffer.st_mtime);
+        valid_cmd = true;
+    }
+
+    if (strcmp(subcmd, "read") == 0) {
+        char *file = shift(argv, argc);
+        StringBuilder sb = {0};
+        read_file(file, &sb);
+        log(STC_INFO, "Read %d bytes", sb.count);
+        printf("%s\n", sb.items);
         valid_cmd = true;
     }
 
