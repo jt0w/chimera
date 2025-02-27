@@ -44,6 +44,10 @@
 #define STC_COMPILER "gcc"
 #endif
 
+#ifndef STC_MIN_LOG_LEVEL 
+    #define STC_MIN_LOG_LEVEL STC_INFO
+#endif
+
 #define STC_SUCCESS 1
 #define STC_FAILURE 1
 
@@ -120,6 +124,8 @@ void stc_log(Stc_LogLevel log_level, const char* fmt, ...);
 void stc_read_file(char* filename, Stc_StringBuilder *sb);
 #ifdef STC_IMPLEMENTATION
 void stc_log(Stc_LogLevel log_level, const char *fmt, ...) {
+    if (log_level < STC_MIN_LOG_LEVEL) return;
+
     FILE* out = stdout;
     switch (log_level) {
         case STC_INFO:

@@ -5,6 +5,8 @@
 
 #define STC_STRIP_PREFIX
 #define STC_IMPLEMENTATION
+// Not needed since the default is STC_INFO
+// #define STC_MIN_LOG_LEVEL STC_INFO
 #include "stc.h"
 
 int main(int argc, char **argv) {
@@ -13,7 +15,7 @@ int main(int argc, char **argv) {
     if (argc < 1) {
         printf("Usage: <%s> <subcmd>\n", program_name);
         printf("To get a list of available subcommands use the subcommand `list`\n");
-        fprintf(stderr, "Error: not enough args\n");
+        log(STC_ERROR, "Not enough args");
         return 1;
     }
 
