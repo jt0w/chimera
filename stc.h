@@ -114,6 +114,7 @@ typedef struct {
                     (sizeof((const char*[]){__VA_ARGS__})/sizeof(const char*))); \
 
 typedef enum {
+    STC_DEBUG,
     STC_INFO,
     STC_WARN,
     STC_ERROR,
@@ -128,6 +129,9 @@ void stc_log(Stc_LogLevel log_level, const char *fmt, ...) {
 
     FILE* out = stdout;
     switch (log_level) {
+        case STC_DEBUG:
+            fprintf(out, "[DEBUG]: ");
+            break;
         case STC_INFO:
             fprintf(out, "[INFO]: ");
             break;
