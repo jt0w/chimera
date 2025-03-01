@@ -122,6 +122,8 @@ typedef enum {
 } Stc_LogLevel;
 
 void stc_log(Stc_LogLevel log_level, const char* fmt, ...);
+void println(const char* fmt, ...);
+void fprintln(FILE *out,const char* fmt, ...);
 void stc_read_file(char* filename, Stc_StringBuilder *sb);
 #ifdef STC_IMPLEMENTATION
 void stc_log(Stc_LogLevel log_level, const char *fmt, ...) {
@@ -154,6 +156,25 @@ void stc_log(Stc_LogLevel log_level, const char *fmt, ...) {
     va_end(args);
 
     fprintf(out, "\n");
+}
+
+
+void fprintln(FILE *out, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(out, fmt, args);
+    va_end(args);
+
+    fprintf(out, "\n");
+}
+
+void println(const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vfprintf(stdout, fmt, args);
+    va_end(args);
+
+    fprintf(stdout, "\n");
 }
 
 static inline Stc_StringBuilder sb_from_string(char *str) {
