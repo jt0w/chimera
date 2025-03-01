@@ -63,7 +63,7 @@
 do {                                                                        \
     if ((da)->count >= (da)->cap) {                                         \
         (da)->cap = (da)->cap == 0 ? STC_INIT_DA_CAP : (da)->cap * 2;       \
-        (da)->items = realloc((da)->items, (da)->cap*sizeof((da)->items));  \
+        (da)->items = realloc((da)->items, (da)->cap*sizeof(*(da)->items));  \
         assert((da)->items != NULL && "You broke or what?");                \
     }                                                                       \
                                                                             \
