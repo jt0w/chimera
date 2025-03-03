@@ -1,2 +1,3 @@
 .direnv/
 showcase
+.ccls-cache
