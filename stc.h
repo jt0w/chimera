@@ -119,7 +119,13 @@ typedef struct {
   size_t count;
   size_t cap;
 } Stc_StringBuilder;
-static inline Stc_StringBuilder sb_from_string(char *str);
+
+static inline Stc_StringBuilder sb_from_string(char *str) {
+  return (Stc_StringBuilder){
+      .items = str,
+      .count = strlen(str),
+  };
+}
 
 typedef struct {
   char **items;
@@ -194,13 +200,6 @@ void println(const char *fmt, ...) {
   va_end(args);
 
   fprintf(stdout, "\n");
-}
-
-static inline Stc_StringBuilder sb_from_string(char *str) {
-  return (Stc_StringBuilder){
-      .items = str,
-      .count = strlen(str),
-  };
 }
 
 int stc_cmd_exec(Stc_Cmd *cmd) {
