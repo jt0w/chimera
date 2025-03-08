@@ -27,7 +27,8 @@
 #define da_get stc_da_get
 #define da_push stc_da_push
 #define da_push_buf stc_da_push_buf
-#define da_push_many stc_da_push_many
+#define da_push_mult stc_da_push_mult
+#define da_free stc_da_free
 #define LogLevel Stc_LogLevel
 #define StringBuilder Stc_StringBuilder
 #define Cmd Stc_Cmd
@@ -49,6 +50,18 @@
 #define STC_MIN_LOG_LEVEL STC_INFO
 #endif
 
+#ifndef STC_FREE
+#define STC_FREE free
+#endif
+
+#ifndef STC_MALLOC
+#define STC_MALLOC malloc
+#endif
+
+#ifndef STC_REALLOC
+#define STC_REALLOC realloc
+#endif
+
 #define STC_SUCCESS 1
 #define STC_FAILURE 1
 
@@ -64,7 +77,8 @@
   do {                                                                         \
     if ((da)->count >= (da)->cap) {                                            \
       (da)->cap = (da)->cap == 0 ? STC_INIT_DA_CAP : (da)->cap * 2;            \
-      (da)->items = realloc((da)->items, (da)->cap * sizeof(*(da)->items));    \
+      (da)->items =                                                            \
+          STC_REALLOC((da)->items, (da)->cap * sizeof(*(da)->items));          \
       assert((da)->items != NULL && "You broke or what?");                     \
     }                                                                          \
                                                                                \
@@ -89,13 +103,16 @@
       while ((da)->count + bufs_c > (da)->cap) {                               \
         (da)->cap *= 2;                                                        \
       }                                                                        \
-      (da)->items = realloc((da)->items, (da)->cap * sizeof(*(da)->items));    \
+      (da)->items =                                                            \
+          STC_REALLOC((da)->items, (da)->cap * sizeof(*(da)->items));          \
       assert((da)->items != NULL);                                             \
     }                                                                          \
     memcpy((da)->items + (da)->count, (bufs),                                  \
            (bufs_c) * sizeof(*(da)->items));                                   \
     (da)->count += (bufs_c);                                                   \
   } while (0)
+
+#define stc_da_free(da) STC_FREE(da.items)
 
 typedef struct {
   char *items;

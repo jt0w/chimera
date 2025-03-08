@@ -41,6 +41,7 @@ int main(int argc, char **argv) {
       da_push_buf(&sb, arg);
     }
     printf("Got %zu bytes of args\n", sb.count);
+    da_free(sb);
     valid_cmd = true;
   }
 
@@ -72,7 +73,6 @@ int main(int argc, char **argv) {
     valid_cmd = true;
   }
 
-  StringBuilder sb = {0};
   if (!valid_cmd) {
     fprintf(stderr, "ERROR: `%s` is not a valid subcmd\n", subcmd);
     return 1;
