@@ -261,7 +261,7 @@ int stc_create_dir(char *dir) {
   struct stat st = {0};
 
   if (stat(dir, &st) == -1) {
-    return mkdir(dir, 0);
+    return mkdir(dir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
   }
   return 0;
 }
