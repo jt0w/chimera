@@ -36,6 +36,7 @@
 #define cmd_exec stc_cmd_exec
 #define rebuild_file stc_rebuild_file
 #define read_file stc_read_file
+#define create_dir stc_create_dir
 #endif
 
 #ifndef STC_INIT_DA_CAP
@@ -150,6 +151,9 @@ void stc_log(Stc_LogLevel log_level, const char *fmt, ...);
 void println(const char *fmt, ...);
 void fprintln(FILE *out, const char *fmt, ...);
 void stc_read_file(char *filename, Stc_StringBuilder *sb);
+
+int stc_create_dir(char *dir);
+
 #ifdef STC_IMPLEMENTATION
 void stc_log(Stc_LogLevel log_level, const char *fmt, ...) {
   if (log_level < STC_MIN_LOG_LEVEL)
@@ -251,6 +255,15 @@ void stc_read_file(char *filename, Stc_StringBuilder *sb) {
     stc_da_push(sb, c);
   }
   fclose(f);
+}
+
+int stc_create_dir(char *dir) {
+  struct stat st = {0};
+
+  if (stat(dir, &st) == -1) {
+    return mkdir(dir, 0);
+  }
+  return 0;
 }
 
 #endif // END STC_IMPLEMTATION
