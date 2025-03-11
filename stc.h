@@ -63,8 +63,23 @@
 #define STC_REALLOC realloc
 #endif
 
+#ifndef STC_ASSERT
+#define STC_ASSERT assert
+#endif
+
 #define STC_SUCCESS 1
 #define STC_FAILURE 1
+
+#ifndef STC_TEMP_ALLOC_CAP
+#define STC_TEMP_ALLOC_CAP (1024 * 1024 * 9)
+#endif
+
+static char stc_temp[STC_TEMP_ALLOC_CAP];
+static int stc_temp_sz = 0;
+
+void *stc_temp_alloc(size_t n);
+char *stc_temp_sprintf(const char *fmt, ...);
+void stc_temp_reset();
 
 #define stc_todo(reason) (fprintf(stderr, "TODO: %s\n", reason), exit(1))
 
@@ -266,5 +281,30 @@ int stc_create_dir(char *dir) {
   return 0;
 }
 
+void *stc_temp_alloc(size_t n) {
+  if (stc_temp_sz + n > STC_TEMP_ALLOC_CAP)
+    return NULL;
+  void *r = &stc_temp[stc_temp_sz];
+  stc_temp_sz += n;
+  return r;
+}
+
+char *stc_temp_sprintf(const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  int n = vsnprintf(NULL, 0, fmt, args);
+  va_end(args);
+
+  STC_ASSERT(n > 0);
+  char *res = stc_temp_alloc(n + 1);
+
+  va_start(args, fmt);
+  vsnprintf(res, n + 1, fmt, args);
+  va_end(args);
+
+  return res;
+}
+
+void stc_temp_reset() { stc_temp_sz = 0; }
 #endif // END STC_IMPLEMTATION
 #endif // END _STC_H_
