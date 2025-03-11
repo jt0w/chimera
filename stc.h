@@ -37,6 +37,9 @@
 #define rebuild_file stc_rebuild_file
 #define read_file stc_read_file
 #define create_dir stc_create_dir
+#define temp_alloc stc_temp_alloc
+#define temp_sprintf stc_temp_sprintf
+#define temp_reset stc_temp_reset
 #endif
 
 #ifndef STC_INIT_DA_CAP
