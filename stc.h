@@ -231,7 +231,7 @@ int stc_cmd_exec(Stc_Cmd *cmd) {
     stc_da_push_buf(&sb, string);
     stc_da_push(&sb, ' ');
   }
-  log(STC_INFO, "+ %s", sb.items);
+  stc_log(STC_INFO, "+ %s", sb.items);
   return system(sb.items);
 }
 
