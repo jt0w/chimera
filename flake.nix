@@ -22,7 +22,7 @@
 
           installPhase = ''
             mkdir -p $out/include
-            cp chimera.h $out/include
+            cp src/chimera.h $out/include
           '';
         };
       };
