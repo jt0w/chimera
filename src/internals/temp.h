@@ -1,6 +1,7 @@
 #ifndef _CHIMERA_TEMP_H_
 #define _CHIMERA_TEMP_H_
 #include <stddef.h>
+#include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
 
