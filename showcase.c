@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define STC_STRIP_PREFIX
-#define STC_IMPLEMENTATION
-// Not needed since the default is STC_INFO
-// #define STC_MIN_LOG_LEVEL STC_INFO
-#include "stc.h"
+#define CHIMERA_IMPLEMENTATION
+#define CHIMERA_STRIP_PREFIX
+// Not needed since the default is CHIMERA_INFO
+// #define CHIMERA_MIN_LOG_LEVEL STC_INFO
+#include "src/chimera.h"
+
 
 int main(int argc, char **argv) {
   rebuild_file(argv, argc);
@@ -16,7 +17,7 @@ int main(int argc, char **argv) {
     printf("Usage: <%s> <subcmd>\n", program_name);
     printf(
         "To get a list of available subcommands use the subcommand `list`\n");
-    log(STC_ERROR, "Not enough args");
+    log(CHIMERA_ERROR, "Not enough args");
     return 1;
   }
 
@@ -68,7 +69,7 @@ int main(int argc, char **argv) {
     char *file = shift(argv, argc);
     StringBuilder sb = {0};
     read_file(file, &sb);
-    log(STC_INFO, "Read %d bytes", sb.count);
+    log(CHIMERA_INFO, "Read %d bytes", sb.count);
     printf("%s\n", sb.items);
     valid_cmd = true;
   }
