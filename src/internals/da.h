@@ -7,7 +7,7 @@
 #define CHIMERA_INIT_DA_CAP 256
 #endif
 
-#define chimera_da_len(da) (sizeof(da) / sizeof(da[0]))
+#define chimera_da_len(da) ((da).count)
 
 #define chimera_da_get(da, i) (assert(i < chimera_da_len(da)), da[i])
 

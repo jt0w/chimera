@@ -10,6 +10,8 @@
 
 #define chimera_shift(xs, xs_sz) (CHIMERA_ASSERT(xs_sz > 0), xs_sz--, *xs++)
 
+#define chimera_array_len(xs) (sizeof (xs) / sizeof(*xs))
+
 typedef enum {
   CHIMERA_DEBUG,
   CHIMERA_INFO,

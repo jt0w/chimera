@@ -5,6 +5,7 @@
   #define todo chimera_todo
   #define log chimera_log
   #define shift chimera_shift
+  #define array_len chimera_array_len
   #define da_len chimera_da_len
   #define da_get chimera_da_get
   #define da_push chimera_da_push
