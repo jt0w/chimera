@@ -6,7 +6,7 @@
 #define CHIMERA_IMPLEMENTATION
 #define CHIMERA_STRIP_PREFIX
 // Not needed since the default is CHIMERA_INFO
-// #define CHIMERA_MIN_LOG_LEVEL STC_INFO
+// #define CHIMERA_MIN_LOG_LEVEL CHIMERA_INFO
 #include "src/chimera.h"
 
 
