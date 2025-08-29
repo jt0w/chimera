@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
     Cmd cmd = {0};
     cmd_push(&cmd, "gcc");
     cmd_push(&cmd, file);
-    if (cmd_exec(&cmd) != 0)
+    if (!cmd_exec(&cmd))
       return 1;
     valid_cmd = true;
   }

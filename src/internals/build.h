@@ -12,7 +12,7 @@ typedef struct {
 
 #define chimera_rebuild_file(argv, argc) chimera__rebuild_file(argv, argc, __FILE__)
 
-int chimera_cmd_exec(Chimera_Cmd *cmd);
+bool chimera_cmd_exec(Chimera_Cmd *cmd);
 void chimera__rebuild_file(char **argv, int argc, const char *filename);
 
 #define chimera_cmd_push(cmd, ...)                                                 \
@@ -22,7 +22,7 @@ void chimera__rebuild_file(char **argv, int argc, const char *filename);
 
 
 #ifdef CHIMERA_IMPLEMENTATION
-int chimera_cmd_exec(Chimera_Cmd *cmd) {
+bool chimera_cmd_exec(Chimera_Cmd *cmd) {
   Chimera_StringBuilder sb = {0};
   while (cmd->count > 0) {
     char *string = chimera_shift(cmd->items, cmd->count);
@@ -30,7 +30,7 @@ int chimera_cmd_exec(Chimera_Cmd *cmd) {
     chimera_da_push(&sb, ' ');
   }
   chimera_log(CHIMERA_INFO, "+ %s", sb.items);
-  return system(sb.items);
+  return system(sb.items) == 0;
 }
 
 void chimera__rebuild_file(char **argv, int argc, const char *filename) {
@@ -62,4 +62,3 @@ void chimera__rebuild_file(char **argv, int argc, const char *filename) {
 
 #endif // END CHIMERA_IMPLEMTATION
 #endif // _CHIMERA_BUILD_H
-//
