@@ -1,8 +1,9 @@
 #ifndef _CHIMERA_BUILD_H
 #define _CHIMERA_BUILD_H
-#include <stddef.h>
 #include "da.h"
 #include "utils.h"
+#include <stdbool.h>
+#include <stddef.h>
 
 typedef struct {
   char **items;
@@ -10,16 +11,16 @@ typedef struct {
   size_t cap;
 } Chimera_Cmd;
 
-#define chimera_rebuild_file(argv, argc) chimera__rebuild_file(argv, argc, __FILE__)
+#define chimera_rebuild_file(argv, argc)                                       \
+  chimera__rebuild_file(argv, argc, __FILE__)
 
 bool chimera_cmd_exec(Chimera_Cmd *cmd);
 void chimera__rebuild_file(char **argv, int argc, const char *filename);
 
-#define chimera_cmd_push(cmd, ...)                                                 \
-  chimera_da_push_mult(                                                            \
+#define chimera_cmd_push(cmd, ...)                                             \
+  chimera_da_push_mult(                                                        \
       cmd, ((const char *[]){__VA_ARGS__}),                                    \
       (sizeof((const char *[]){__VA_ARGS__}) / sizeof(const char *)));
-
 
 #ifdef CHIMERA_IMPLEMENTATION
 bool chimera_cmd_exec(Chimera_Cmd *cmd) {
@@ -48,9 +49,9 @@ void chimera__rebuild_file(char **argv, int argc, const char *filename) {
 
   Chimera_Cmd cmd = {0};
   chimera_cmd_push(&cmd, CHIMERA_COMPILER, filename, "-o", bin_path);
-  if (chimera_cmd_exec(&cmd) != 0) {
+  if (!chimera_cmd_exec(&cmd)) {
     chimera_log(CHIMERA_ERROR, " Failed while building %s", filename);
-    exit(0);
+    exit(1);
   }
   cmd.count = 0;
   chimera_cmd_push(&cmd, bin_path);
