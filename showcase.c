@@ -1,13 +1,13 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #define CHIMERA_IMPLEMENTATION
 #define CHIMERA_STRIP_PREFIX
 // Not needed since the default is CHIMERA_INFO
 // #define CHIMERA_MIN_LOG_LEVEL CHIMERA_INFO
 #include "src/chimera.h"
+
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int main(int argc, char **argv) {
   rebuild_file(argv, argc);
