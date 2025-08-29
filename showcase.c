@@ -9,7 +9,6 @@
 // #define CHIMERA_MIN_LOG_LEVEL CHIMERA_INFO
 #include "src/chimera.h"
 
-
 int main(int argc, char **argv) {
   rebuild_file(argv, argc);
   char *program_name = shift(argv, argc);

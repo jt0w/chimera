@@ -1,16 +1,17 @@
 #ifndef _CHIMERA_UTILS_H_
 #define _CHIMERA_UTILS_H_
+#include "da.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <sys/stat.h>
-#include "da.h"
+#include <unistd.h>
 
 #define chimera_todo(reason) (fprintf(stderr, "TODO: %s\n", reason), exit(1))
 
 #define chimera_shift(xs, xs_sz) (CHIMERA_ASSERT(xs_sz > 0), xs_sz--, *xs++)
 
-#define chimera_array_len(xs) (sizeof (xs) / sizeof(*xs))
+#define chimera_array_len(xs) (sizeof(xs) / sizeof(*xs))
 
 typedef enum {
   CHIMERA_DEBUG,
@@ -25,8 +26,9 @@ void println(const char *fmt, ...);
 void fprintln(FILE *out, const char *fmt, ...);
 void chimera_read_file(char *filename, Chimera_StringBuilder *sb);
 
-
 int chimera_create_dir(char *dir);
+
+bool chimera_file_exists(const char *filepath);
 
 #ifdef CHIMERA_IMPLEMENTATION
 void chimera_log(Chimera_LogLevel log_level, const char *fmt, ...) {
@@ -100,6 +102,10 @@ int chimera_create_dir(char *dir) {
     return mkdir(dir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
   }
   return 0;
+}
+
+bool chimera_file_exists(const char *filepath) {
+  return access(filepath, F_OK) == 0;
 }
 #endif // END CHIMERA_IMPLEMTATION
 #endif // _CHIMERA_UTILS_H_

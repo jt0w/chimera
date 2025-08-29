@@ -1,22 +1,20 @@
 #ifndef _CHIMERA_TEMP_H_
 #define _CHIMERA_TEMP_H_
+#include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <stdarg.h>
 #include <stdlib.h>
 
 #ifndef CHIMERA_TEMP_ALLOC_CAP
-  #define CHIMERA_TEMP_ALLOC_CAP (1024 * 1024 * 9)
+#define CHIMERA_TEMP_ALLOC_CAP (1024 * 1024 * 9)
 #endif
 
 static char chimera_temp[CHIMERA_TEMP_ALLOC_CAP];
 static int chimera_temp_sz = 0;
 
-
 void *chimera_temp_alloc(size_t n);
 char *chimera_temp_sprintf(const char *fmt, ...);
 void chimera_temp_reset();
-
 
 #ifdef CHIMERA_IMPLEMENTATION
 void *chimera_temp_alloc(size_t n) {
