@@ -2,6 +2,7 @@
 #define _CHIMERA_UTILS_H_
 #include "da.h"
 #include <assert.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
