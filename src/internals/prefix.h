@@ -24,6 +24,11 @@
 #define temp_alloc chimera_temp_alloc
 #define temp_sprintf chimera_temp_sprintf
 #define temp_reset chimera_temp_reset
+#define COLOR_TEXT  CHIMERA_COLOR_TEXT
+#define COLOR_ERROR CHIMERA_COLOR_ERROR
+#define COLOR_INFO  CHIMERA_COLOR_INFO
+#define COLOR_WARN  CHIMERA_COLOR_WARN
+#define COLOR_TRACE CHIMERA_COLOR_TRACE
 #endif
 
 #endif // _CHIMERA_PREFIX_H_

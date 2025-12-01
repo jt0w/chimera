@@ -1,4 +1,5 @@
 #ifndef _CHIMERA_UTILS_H_
+
 #define _CHIMERA_UTILS_H_
 #include "da.h"
 #include <assert.h>
@@ -14,6 +15,12 @@
 #define chimera_shift(xs, xs_sz) (CHIMERA_ASSERT(xs_sz > 0), xs_sz--, *xs++)
 
 #define chimera_array_len(xs) (sizeof(xs) / sizeof(*xs))
+
+#define CHIMERA_COLOR_TEXT "\x1B[0m"
+#define CHIMERA_COLOR_ERROR "\x1B[31m"
+#define CHIMERA_COLOR_INFO "\x1B[32m"
+#define CHIMERA_COLOR_WARN "\x1B[33m"
+#define CHIMERA_COLOR_TRACE "\x1B[34m"
 
 typedef enum {
   CHIMERA_DEBUG,
@@ -43,18 +50,18 @@ void chimera_log(Chimera_LogLevel log_level, const char *fmt, ...) {
     fprintf(out, "[DEBUG]: ");
     break;
   case CHIMERA_INFO:
-    fprintf(out, "[INFO]: ");
+    fprintf(out, "[%sINFO%s]: ", CHIMERA_COLOR_INFO, CHIMERA_COLOR_TEXT);
     break;
   case CHIMERA_WARN:
-    fprintf(out, "[WARN]: ");
+    fprintf(out, "[%sWARN%s]: ", CHIMERA_COLOR_WARN, CHIMERA_COLOR_TEXT);
     break;
   case CHIMERA_ERROR:
     out = stderr;
-    fprintf(out, "[ERROR]: ");
+    fprintf(out, "[%sERROR%s]: ", CHIMERA_COLOR_ERROR, CHIMERA_COLOR_TEXT);
     break;
   case CHIMERA_TRACE:
     out = stderr;
-    fprintf(out, "[TRACE]: ");
+    fprintf(out, "[%sTRACE%s]: ", CHIMERA_COLOR_TRACE, CHIMERA_COLOR_TEXT);
     break;
   }
 
