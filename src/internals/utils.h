@@ -16,11 +16,19 @@
 
 #define chimera_array_len(xs) (sizeof(xs) / sizeof(*xs))
 
-#define CHIMERA_COLOR_TEXT "\x1B[0m"
-#define CHIMERA_COLOR_ERROR "\x1B[31m"
-#define CHIMERA_COLOR_INFO "\x1B[32m"
-#define CHIMERA_COLOR_WARN "\x1B[33m"
-#define CHIMERA_COLOR_TRACE "\x1B[34m"
+#ifndef CHIMERA_NO_COLOR_LOG
+  #define CHIMERA_COLOR_TEXT "\x1B[0m"
+  #define CHIMERA_COLOR_ERROR "\x1B[31m"
+  #define CHIMERA_COLOR_INFO "\x1B[32m"
+  #define CHIMERA_COLOR_WARN "\x1B[33m"
+  #define CHIMERA_COLOR_TRACE "\x1B[34m"
+#else // CHIMERA_NO_COLOR_LOG
+  #define CHIMERA_COLOR_TEXT ""
+  #define CHIMERA_COLOR_ERROR ""
+  #define CHIMERA_COLOR_INFO ""
+  #define CHIMERA_COLOR_WARN ""
+  #define CHIMERA_COLOR_TRACE ""
+#endif // CHIMERA_NO_COLOR_LOG
 
 typedef enum {
   CHIMERA_DEBUG,
