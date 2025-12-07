@@ -11,6 +11,7 @@
 
 int main(int argc, char **argv) {
   rebuild_file(argv, argc);
+
   char *program_name = shift(argv, argc);
   if (argc < 1) {
     printf("Usage: <%s> <subcmd>\n", program_name);
@@ -31,6 +32,7 @@ int main(int argc, char **argv) {
     printf("    build <file.c>   ->  Build a c file\n");
     printf("    time <file>      ->  Get Timestamp of a file\n");
     printf("    read <file>      ->  Read the contents of a file\n");
+    printf("    split <file>     ->  Read the contents of a file and split it by space\n");
     valid_cmd = true;
   }
 
@@ -72,6 +74,25 @@ int main(int argc, char **argv) {
     printf("%s\n", sb.items);
     valid_cmd = true;
   }
+
+  if (strcmp(subcmd, "split") == 0) {
+    char *file = shift(argv, argc);
+    StringBuilder sb = {0};
+    read_file(file, &sb);
+    StringView sv = sv_from_sb(sb);
+    StringViews svs = sv_split_by_char(sv, ' ');
+    for (size_t i = 0; i < svs.count; ++i) {
+      printf("<");
+      for (size_t j = 0; j < svs.items[i].count; ++j) {
+        if (svs.items[i].data[j] == '\n') printf("\\n");
+        else printf("%c", svs.items[i].data[j]);
+      }
+      printf(">");
+      printf("\n");
+    }
+    valid_cmd = true;
+  }
+
 
   if (!valid_cmd) {
     fprintf(stderr, "ERROR: `%s` is not a valid subcmd\n", subcmd);
