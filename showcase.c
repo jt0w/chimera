@@ -1,7 +1,5 @@
 #define CHIMERA_IMPLEMENTATION
 #define CHIMERA_STRIP_PREFIX
-// Not needed since the default is CHIMERA_INFO
-// #define CHIMERA_MIN_LOG_LEVEL CHIMERA_INFO
 #include "src/chimera.h"
 
 #include <stdbool.h>
@@ -11,72 +9,76 @@
 
 int main(int argc, char **argv) {
   rebuild_file(argv, argc);
+  const char *program_name = shift(argv, argc);
 
-  char *program_name = shift(argv, argc);
-  if (argc < 1) {
-    printf("Usage: <%s> <subcmd>\n", program_name);
-    printf(
-        "To get a list of available subcommands use the subcommand `list`\n");
-    log(CHIMERA_ERROR, "Not enough args");
-    return 1;
-  }
+  Chimera_Flag list  = chimera_parse_boolean_flag("list", "l", false);
+  Chimera_Flag da    = chimera_parse_boolean_flag("dynamic_array", "da", false);
+  Chimera_Flag build = chimera_parse_boolean_flag("build", "b", false);
+  Chimera_Flag read  = chimera_parse_boolean_flag("read", "r", false);
+  Chimera_Flag split = chimera_parse_boolean_flag("split", "s", false);
 
-  char *subcmd = shift(argv, argc);
-  bool valid_cmd = false;
-
-  if (strcmp(subcmd, "list") == 0) {
+  if (list.as.boolean) {
     printf("Here a list of all subcommands:\n");
-    printf("    list             ->  Print a list of all subcmds\n");
-    printf("    da               ->  Add all following args to a dynamic array "
-           "and print each one of those\n");
-    printf("    build <file.c>   ->  Build a c file\n");
-    printf("    time <file>      ->  Get Timestamp of a file\n");
-    printf("    read <file>      ->  Read the contents of a file\n");
-    printf("    split <file>     ->  Read the contents of a file and split it by space\n");
-    valid_cmd = true;
+    printf("    list               ->  Print a list of all subcmds\n");
+    printf(
+        "    da <arg> <arg> ... ->  Add all following args to a dynamic array "
+        "and print each one of those\n");
+    printf("    build <file.c>     ->  Build a c file\n");
+    printf("    read  <file>       ->  Read the contents of a file\n");
+    printf(
+        "    split <file>       ->  Read the contents of a file and split it "
+        "by space\n");
+    return 0;
   }
 
-  if (strcmp(subcmd, "da") == 0) {
+  if (da.as.boolean) {
     StringBuilder sb = {0};
-    while (argc > 0) {
-      char *arg = shift(argv, argc);
-      da_push_buf(&sb, arg);
+    if (da.pos + 1 >= argc) {
+      log(CHIMERA_ERROR,
+          "Expected list of args like this: `<arg> <arg> <arg> ..`");
+      return 1;
+    }
+    for (int i = da.pos + 1; i < argc; ++i) {
+      char *buf = argv[i];
+      da_push_buf(&sb, buf);
     }
     printf("Got %zu bytes of args\n", sb.count);
     da_free(sb);
-    valid_cmd = true;
+    return 0;
   }
 
-  if (strcmp(subcmd, "build") == 0) {
-    char *file = shift(argv, argc);
+  if (build.as.boolean) {
+    if (build.pos + 1 >= argc) {
+      log(CHIMERA_ERROR, "Expected c file");
+      return 1;
+    }
+    char *file = argv[build.pos + 1];
     Cmd cmd = {0};
     cmd_push(&cmd, "gcc");
     cmd_push(&cmd, file);
     if (!cmd_exec(&cmd))
       return 1;
-    valid_cmd = true;
+    return 0;
   }
 
-  if (strcmp(subcmd, "time") == 0) {
-    char *file = shift(argv, argc);
-    struct stat buffer;
-    int status;
-    status = stat(file, &buffer);
-    printf("st_mtime => %ld", buffer.st_mtime);
-    valid_cmd = true;
-  }
-
-  if (strcmp(subcmd, "read") == 0) {
-    char *file = shift(argv, argc);
+  if (read.as.boolean) {
+    if (read.pos + 1 >= argc) {
+      log(CHIMERA_ERROR, "Expected filename");
+      return 1;
+    }
+    char *file = argv[build.pos + 1];
     StringBuilder sb = {0};
     read_file(file, &sb);
     log(CHIMERA_INFO, "Read %d bytes", sb.count);
     printf("%s\n", sb.items);
-    valid_cmd = true;
   }
 
-  if (strcmp(subcmd, "split") == 0) {
-    char *file = shift(argv, argc);
+  if (split.as.boolean) {
+    if (split.pos + 1 >= argc) {
+      log(CHIMERA_ERROR, "Expected filename");
+      return 1;
+    }
+    char *file = argv[build.pos + 1];
     StringBuilder sb = {0};
     read_file(file, &sb);
     StringView sv = sv_from_sb(sb);
@@ -84,20 +86,18 @@ int main(int argc, char **argv) {
     for (size_t i = 0; i < svs.count; ++i) {
       printf("<");
       for (size_t j = 0; j < svs.items[i].count; ++j) {
-        if (svs.items[i].data[j] == '\n') printf("\\n");
-        else printf("%c", svs.items[i].data[j]);
+        if (svs.items[i].data[j] == '\n')
+          printf("\\n");
+        else
+          printf("%c", svs.items[i].data[j]);
       }
       printf(">");
       printf("\n");
     }
-    valid_cmd = true;
+    return 0;
   }
 
-
-  if (!valid_cmd) {
-    fprintf(stderr, "ERROR: `%s` is not a valid subcmd\n", subcmd);
-    return 1;
-  };
-
-  return 0;
+  log(CHIMERA_ERROR, "No valid cmd was specified");
+  log(CHIMERA_ERROR, "To get a list of cmds use `%s list`", program_name);
+  return 1;
 }

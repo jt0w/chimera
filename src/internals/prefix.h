@@ -1,6 +1,5 @@
 #ifndef _CHIMERA_PREFIX_H_
 #define _CHIMERA_PREFIX_H_
-
 #ifdef CHIMERA_STRIP_PREFIX
 #define todo             chimera_todo
 #define log              chimera_log
@@ -40,6 +39,17 @@
 #define COLOR_INFO       CHIMERA_COLOR_INFO
 #define COLOR_WARN       CHIMERA_COLOR_WARN
 #define COLOR_TRACE      CHIMERA_COLOR_TRACE
+#define FlagType Chimera_FlagType
+#define FLAG_ERROR CHIMERA_FLAG_ERROR
+#define FLAG_STRING CHIMERA_FLAG_STRING
+#define FLAG_INT CHIMERA_FLAG_INT
+#define FLAG_BOOLEAN CHIMERA_FLAG_BOOLEAN
+#define FLAG_COUNT CHIMERA_FLAG_COUNT
+#define FlagValue Chimera_FlagValue
+#define Flag Chimera_Flag
+#define parse_flag chimera_parse_flag
+#define parse_boolean_flag chimera_parse_boolean_flag
+#define parse_str_flag chimera_parse_str_flag
+#define parse_int_flag chimera_parse_int_flag
 #endif
-
 #endif // _CHIMERA_PREFIX_H_

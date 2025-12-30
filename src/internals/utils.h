@@ -1,6 +1,6 @@
 #ifndef _CHIMERA_UTILS_H_
-
 #define _CHIMERA_UTILS_H_
+#include "defs.h"
 #include "da.h"
 #include <assert.h>
 #include <stdarg.h>
