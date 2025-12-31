@@ -11,11 +11,11 @@ int main(int argc, char **argv) {
   rebuild_file(argv, argc);
   const char *program_name = shift(argv, argc);
 
-  Chimera_Flag list  = chimera_parse_boolean_flag("list", "l", false);
-  Chimera_Flag da    = chimera_parse_boolean_flag("dynamic_array", "da", false);
-  Chimera_Flag build = chimera_parse_boolean_flag("build", "b", false);
-  Chimera_Flag read  = chimera_parse_boolean_flag("read", "r", false);
-  Chimera_Flag split = chimera_parse_boolean_flag("split", "s", false);
+  Chimera_Flag list  = parse_boolean_flag("list", "l", false);
+  Chimera_Flag da    = parse_boolean_flag("dynamic_array", "da", false);
+  Chimera_Flag build = parse_boolean_flag("build", "b", false);
+  Chimera_Flag read  = parse_boolean_flag("read", "r", false);
+  Chimera_Flag split = parse_boolean_flag("split", "s", false);
 
   if (list.as.boolean) {
     printf("Here a list of all subcommands:\n");

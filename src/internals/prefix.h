@@ -12,6 +12,11 @@
 #define da_push_mult     chimera_da_push_mult
 #define da_free          chimera_da_free
 #define LogLevel         Chimera_LogLevel
+#define DEBUG            CHIMERA_DEBUG
+#define INFO             CHIMERA_INFO
+#define WARN             CHIMERA_WARN
+#define ERROR            CHIMERA_ERROR
+#define TRACE            CHIMERA_TRACE
 #define StringBuilder    Chimera_StringBuilder
 #define sb_from_string   chimera_sb_from_string
 #define StringView       Chimera_StringView
