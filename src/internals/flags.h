@@ -38,7 +38,7 @@ Chimera_Flag chimera_parse_flag(char **argv, int argc, const char *long_name,
 // All the following macros assume that argv and argc are available under `argv` and `argc`
 #define chimera_parse_boolean_flag(long_name, short_name, default) chimera_parse_flag((argv), (argc), (long_name),(short_name), CHIMERA_FLAG_BOOLEAN, (Chimera_FlagValue){.boolean = (default)})
 #define chimera_parse_str_flag(long_name, short_name, default)     chimera_parse_flag((argv), (argc), (long_name),(short_name), CHIMERA_FLAG_STRING, (Chimera_FlagValue){.str = (default)})
-#define chimera_parse_int_flag(long_name, short_name, default)     chimera_parse_flag((argv), (argc), (long_name),(short_name), CHIMERA_INT_FLAG, (Chimera_FlagValue){.int = (default)})
+#define chimera_parse_int_flag(long_name, short_name, default)     chimera_parse_flag((argv), (argc), (long_name),(short_name), CHIMERA_FLAG_INT, (Chimera_FlagValue){.int = (default)})
 
 
 #ifdef CHIMERA_IMPLEMENTATION
