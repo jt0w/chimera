@@ -52,7 +52,6 @@ Chimera_Flag chimera_parse_flag(char **argv, int argc, const char *long_name,
   for (size_t i = 0; i < argc; ++i) {
     if (strcmp(argv[i], long_name) == 0 || strcmp(argv[i], short_name) == 0) {
       flag.pos = i;
-      chimera_shift(argv, argc);
       if (type == CHIMERA_FLAG_BOOLEAN) {
         flag.as.boolean = true;
         return flag;
@@ -62,7 +61,7 @@ Chimera_Flag chimera_parse_flag(char **argv, int argc, const char *long_name,
         flag.as.error = "Expected value";
         return flag;
       }
-      char *arg = chimera_shift(argv, argc);
+      char *arg = argv[++i];
       assert(CHIMERA_FLAG_COUNT == 4);
       switch (type) {
       case CHIMERA_FLAG_STRING:
