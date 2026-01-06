@@ -42,7 +42,6 @@ Chimera_Flag chimera_parse_flag(char **argv, int argc, const char *long_name,
 
 
 #ifdef CHIMERA_IMPLEMENTATION
-#endif // CHIMERA_IMPLEMENTATION
 Chimera_Flag chimera_parse_flag(char **argv, int argc, const char *long_name,
                                 const char *short_name, Chimera_FlagType type,
                                 Chimera_FlagValue default_value) {
@@ -89,4 +88,5 @@ Chimera_Flag chimera_parse_flag(char **argv, int argc, const char *long_name,
   }
   return flag;
 }
+#endif // CHIMERA_IMPLEMENTATION
 #endif // endif FLAGS_H
