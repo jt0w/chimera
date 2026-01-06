@@ -56,5 +56,9 @@
 #define parse_boolean_flag chimera_parse_boolean_flag
 #define parse_str_flag chimera_parse_str_flag
 #define parse_int_flag chimera_parse_int_flag
+#define Arena Chimera_Arena
+#define arena_create chimera_arena_create
+#define arena_destroy chimera_arena_destroy
+#define arena_alloc chimera_arena_alloc
 #endif
 #endif // _CHIMERA_PREFIX_H_

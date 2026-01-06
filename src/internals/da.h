@@ -8,6 +8,14 @@
 #define CHIMERA_INIT_DA_CAP 256
 #endif
 
+#ifndef CHIMERA_DA_REALLOC
+#define CHIMERA_DA_REALLOC CHIMERA_REALLOC
+#endif
+
+#ifndef CHIMERA_DA_FREE
+#define CHIMERA_DA_FREE CHIMERA_FREE
+#endif
+
 #define chimera_da_len(da) ((da).count)
 
 #define chimera_da_get(da, i) (assert(i < chimera_da_len(da)), da[i])
@@ -17,7 +25,7 @@
     if ((da)->count >= (da)->cap) {                                            \
       (da)->cap = (da)->cap == 0 ? CHIMERA_INIT_DA_CAP : (da)->cap * 2;        \
       (da)->items =                                                            \
-          CHIMERA_REALLOC((da)->items, (da)->cap * sizeof(*(da)->items));      \
+          CHIMERA_DA_REALLOC((da)->items, (da)->cap * sizeof(*(da)->items));      \
       assert((da)->items != NULL && "You broke or what?");                     \
     }                                                                          \
                                                                                \
@@ -44,7 +52,7 @@
         (da)->cap *= 2;                                                        \
       }                                                                        \
       (da)->items =                                                            \
-          CHIMERA_REALLOC((da)->items, (da)->cap * sizeof(*(da)->items));      \
+          CHIMERA_DA_REALLOC((da)->items, (da)->cap * sizeof(*(da)->items));      \
       assert((da)->items != NULL);                                             \
     }                                                                          \
     memcpy((da)->items + (da)->count, (bufs),                                  \
@@ -60,7 +68,7 @@ typedef struct {
 
 Chimera_StringBuilder chimera_sb_from_string(char *str);
 
-#define chimera_da_free(da) CHIMERA_FREE(da.items)
+#define chimera_da_free(da) CHIMERA_DA_FREE(da.items)
 
 typedef struct {
   const char *data;
