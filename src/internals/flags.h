@@ -52,7 +52,7 @@ Chimera_Flag chimera_parse_flag(char **argv, int argc, const char *long_name,
     if (strcmp(argv[i], long_name) == 0 || strcmp(argv[i], short_name) == 0) {
       flag.pos = i;
       if (type == CHIMERA_FLAG_BOOLEAN) {
-        flag.as.boolean = true;
+        flag.as.boolean = !default_value.boolean;
         return flag;
       }
       if (argc == 0) {
