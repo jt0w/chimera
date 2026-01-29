@@ -14,3 +14,5 @@ gcc -o showcase showcase.c
 In this exampe I used gcc but you should be able to use any compiler.
 After this to build `showcase.c` (if you for example modified it) you can just do `./showcase build` to make the showcase rebuild itself.
 
+## TODOs
+- document code in header files
