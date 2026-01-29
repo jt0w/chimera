@@ -11,6 +11,7 @@
 #define da_push_buf      chimera_da_push_buf
 #define da_push_mult     chimera_da_push_mult
 #define da_free          chimera_da_free
+#define DA_STRUCT        CHIMERA_DA_STRUCT
 #define LogLevel         Chimera_LogLevel
 #define DEBUG            CHIMERA_DEBUG
 #define INFO             CHIMERA_INFO
