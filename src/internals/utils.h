@@ -41,9 +41,9 @@ typedef enum {
 void chimera_log(Chimera_LogLevel log_level, const char *fmt, ...);
 void println(const char *fmt, ...);
 void fprintln(FILE *out, const char *fmt, ...);
-void chimera_read_file(char *filename, Chimera_StringBuilder *sb);
+bool chimera_read_file(char *filename, Chimera_StringBuilder *sb);
 
-int chimera_create_dir(char *dir);
+bool chimera_create_dir(char *dir);
 
 bool chimera_file_exists(const char *filepath);
 
@@ -99,24 +99,22 @@ void println(const char *fmt, ...) {
   fprintf(stdout, "\n");
 }
 
-void chimera_read_file(char *filename, Chimera_StringBuilder *sb) {
+bool chimera_read_file(char *filename, Chimera_StringBuilder *sb) {
   FILE *f = fopen(filename, "r");
-  if (f == NULL) {
-    chimera_log(CHIMERA_ERROR, "´%s´ could not be opened", filename);
-    exit(1);
-  }
+  if (f == NULL) return false;
   char c;
   while ((c = fgetc(f)) != EOF) {
     chimera_da_push(sb, c);
   }
   fclose(f);
+  return true;
 }
 
-int chimera_create_dir(char *dir) {
+bool chimera_create_dir(char *dir) {
   struct stat st = {0};
 
   if (stat(dir, &st) == -1) {
-    return mkdir(dir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    return mkdir(dir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == 0;
   }
   return 0;
 }
