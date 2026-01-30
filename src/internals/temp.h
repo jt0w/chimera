@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 #ifndef CHIMERA_TEMP_ALLOC_CAP
-#define CHIMERA_TEMP_ALLOC_CAP (1024 * 1024 * 9)
+#define CHIMERA_TEMP_ALLOC_CAP (1024 * 1024 * 8)
 #endif
 
 static char chimera_temp[CHIMERA_TEMP_ALLOC_CAP];
