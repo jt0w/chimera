@@ -13,6 +13,9 @@
       in {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [gcc];
+          shellHook = ''
+            export PATH=$PATH:$PWD/
+          '';
         };
 
         packages.default = pkgs.stdenv.mkDerivation {

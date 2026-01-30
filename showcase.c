@@ -10,25 +10,17 @@
 int main(int argc, char **argv) {
   rebuild_file(argv, argc);
   const char *program_name = shift(argv, argc);
+  Chimera_Flags flags = {0};
 
   //                                      long name       short name   default
-  Chimera_Flag list  = parse_boolean_flag("list"         , "l" ,       false);
-  Chimera_Flag da    = parse_boolean_flag("dynamic_array", "da",       false);
-  Chimera_Flag build = parse_boolean_flag("build"        , "b" ,       false);
-  Chimera_Flag read  = parse_boolean_flag("read"         , "r" ,       false);
-  Chimera_Flag split = parse_boolean_flag("split"        , "s" ,       false);
+  Chimera_Flag help  = parse_boolean_flag(flags, "help"         , "h" ,       false, "Show list of all available commands");
+  Chimera_Flag da    = parse_boolean_flag(flags, "dynamic_array", "da",       false, "Collect all following flags in a dynamic array");
+  Chimera_Flag build = parse_boolean_flag(flags, "build"        , "b" ,       false, "build a c file");
+  Chimera_Flag read  = parse_boolean_flag(flags, "read"         , "r" ,       false, "read a file");
+  Chimera_Flag split = parse_boolean_flag(flags, "split"        , "s" ,       false, "split a file by spaces");
 
-  if (list.as.boolean) {
-    printf("Here a list of all subcommands:\n");
-    printf("    list               ->  Print a list of all subcmds\n");
-    printf(
-        "    da <arg> <arg> ... ->  Add all following args to a dynamic array "
-        "and print each one of those\n");
-    printf("    build <file.c>     ->  Build a c file\n");
-    printf("    read  <file>       ->  Read the contents of a file\n");
-    printf(
-        "    split <file>       ->  Read the contents of a file and split it "
-        "by space\n");
+  if (help.as.boolean) {
+    chimera_print_flags_help(flags);
     return 0;
   }
 
@@ -99,6 +91,6 @@ int main(int argc, char **argv) {
   }
 
   log(CHIMERA_ERROR, "No valid cmd was specified");
-  log(CHIMERA_ERROR, "To get a list of cmds use `%s list`", program_name);
+  log(CHIMERA_ERROR, "To get a list of cmds use `%s help`", program_name);
   return 1;
 }

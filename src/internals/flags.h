@@ -27,27 +27,37 @@ typedef union {
 typedef struct {
   Chimera_FlagType type;
   Chimera_FlagValue as;
+  const char *long_name;
+  const char *short_name;
+  const char *desc;
   // pos in argv
   int pos;
 } Chimera_Flag;
 
-Chimera_Flag chimera_parse_flag(char **argv, int argc, const char *long_name,
+CHIMERA_DA_STRUCT(Chimera_Flag, Chimera_Flags)
+
+Chimera_Flag chimera_parse_flag(Chimera_Flags *flags, char **argv, int argc, const char *long_name,
                                 const char *short_name, Chimera_FlagType type,
-                                Chimera_FlagValue default_value);
+                                Chimera_FlagValue default_value, const char *desc);
 
 // All the following macros assume that argv and argc are available under `argv` and `argc`
-#define chimera_parse_boolean_flag(long_name, short_name, default) chimera_parse_flag((argv), (argc), (long_name),(short_name), CHIMERA_FLAG_BOOLEAN, (Chimera_FlagValue){.boolean = (default)})
-#define chimera_parse_str_flag(long_name, short_name, default)     chimera_parse_flag((argv), (argc), (long_name),(short_name), CHIMERA_FLAG_STRING, (Chimera_FlagValue){.str = (default)})
-#define chimera_parse_int_flag(long_name, short_name, default)     chimera_parse_flag((argv), (argc), (long_name),(short_name), CHIMERA_FLAG_INT, (Chimera_FlagValue){.num_int = (default)})
+#define chimera_parse_boolean_flag(flags, long_name, short_name, default, desc) chimera_parse_flag(&flags, (argv), (argc), (long_name),(short_name), CHIMERA_FLAG_BOOLEAN, (Chimera_FlagValue){.boolean = (default)}, desc)
+#define chimera_parse_str_flag    (flags, long_name, short_name, default, desc) chimera_parse_flag(&flags, (argv), (argc), (long_name),(short_name), CHIMERA_FLAG_STRING,  (Chimera_FlagValue){.str =     (default)}, desc)
+#define chimera_parse_int_flag    (flags, long_name, short_name, default, desc) chimera_parse_flag(&flags, (argv), (argc), (long_name),(short_name), CHIMERA_FLAG_INT,     (Chimera_FlagValue){.num_int = (default)}, desc)
 
+void chimera_print_flags_help(Chimera_Flags flags);
 
 #ifdef CHIMERA_IMPLEMENTATION
-Chimera_Flag chimera_parse_flag(char **argv, int argc, const char *long_name,
+Chimera_Flag chimera_parse_flag(Chimera_Flags *flags, char **argv, int argc, const char *long_name,
                                 const char *short_name, Chimera_FlagType type,
-                                Chimera_FlagValue default_value) {
+                                Chimera_FlagValue default_value, const char *desc) {
   Chimera_Flag flag = {0};
   flag.type = type;
   flag.as = default_value;
+  flag.long_name = long_name;
+  flag.short_name = short_name;
+  flag.desc = desc;
+  chimera_da_push(flags, flag);
   for (size_t i = 0; i < argc; ++i) {
     if (strcmp(argv[i], long_name) == 0 || strcmp(argv[i], short_name) == 0) {
       flag.pos = i;
@@ -87,6 +97,22 @@ Chimera_Flag chimera_parse_flag(char **argv, int argc, const char *long_name,
     }
   }
   return flag;
+}
+
+void chimera_print_flags_help(Chimera_Flags flags) {
+  size_t max_short_len = 0;
+  size_t max_long_len = 0;
+  size_t l = 0;
+  chimera_da_foreach(Chimera_Flag, flag, flags) {
+    l = strlen(flag->short_name);
+    if (l > max_short_len) max_short_len = l;
+    l = strlen(flag->long_name);
+    if (l > max_long_len) max_long_len = l;
+  }
+  println("Available flags:");
+  chimera_da_foreach(Chimera_Flag, flag, flags) {
+    println("   %-*s | %-*s -> %s", max_short_len, flag->short_name, max_long_len, flag->long_name, flag->desc);
+  }
 }
 #endif // CHIMERA_IMPLEMENTATION
 #endif // endif FLAGS_H
