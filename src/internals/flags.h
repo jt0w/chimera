@@ -43,9 +43,14 @@ Chimera_Flag chimera_parse_flag(Chimera_Flags *flags, char **argv, int argc, con
                                 Chimera_FlagValue default_value, const char *desc);
 
 // All the following macros assume that argv and argc are available under `argv` and `argc`
-#define chimera_parse_boolean_flag(flags, long_name, short_name, default, desc) chimera_parse_flag(&flags, (argv), (argc), (long_name),(short_name), CHIMERA_FLAG_BOOLEAN, (Chimera_FlagValue){.boolean = (default)}, desc)
-#define chimera_parse_str_flag    (flags, long_name, short_name, default, desc) chimera_parse_flag(&flags, (argv), (argc), (long_name),(short_name), CHIMERA_FLAG_STRING,  (Chimera_FlagValue){.str =     (default)}, desc)
-#define chimera_parse_int_flag    (flags, long_name, short_name, default, desc) chimera_parse_flag(&flags, (argv), (argc), (long_name),(short_name), CHIMERA_FLAG_INT,     (Chimera_FlagValue){.num_int = (default)}, desc)
+#define chimera_parse_boolean_flag(flags, long_name, short_name, default, desc)  \
+chimera_parse_flag(&flags, (argv), (argc), (long_name),(short_name), CHIMERA_FLAG_BOOLEAN, (Chimera_FlagValue){.boolean = (default)}, desc)
+
+#define chimera_parse_str_flag(flags, long_name, short_name, default, desc) \
+  chimera_parse_flag(&flags, (argv), (argc), (long_name),(short_name), CHIMERA_FLAG_STRING,  (Chimera_FlagValue){.str = (default)}, desc)
+
+#define chimera_parse_int_flag(flags, long_name, short_name, default, desc)  \
+chimera_parse_flag(&flags, (argv), (argc), (long_name),(short_name), CHIMERA_FLAG_INT,     (Chimera_FlagValue){.num_int = (default)}, desc)
 
 void chimera_print_flags_help(Chimera_Flags flags);
 
