@@ -86,11 +86,11 @@ int main(int argc, char **argv) {
     StringViews svs = sv_split_by_char(sv, ' ');
     for (size_t i = 0; i < svs.count; ++i) {
       printf("<");
-      for (size_t j = 0; j < svs.items[i].count; ++j) {
-        if (svs.items[i].data[j] == '\n')
+      da_foreach(char, c, svs.items[i]) {
+        if (*c == '\n')
           printf("\\n");
         else
-          printf("%c", svs.items[i].data[j]);
+          printf("%c", *c);
       }
       printf(">");
       printf("\n");

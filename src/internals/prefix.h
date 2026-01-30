@@ -12,6 +12,7 @@
 #define da_push_mult     chimera_da_push_mult
 #define da_free          chimera_da_free
 #define DA_STRUCT        CHIMERA_DA_STRUCT
+#define da_foreach       chimera_da_foreach
 #define LogLevel         Chimera_LogLevel
 #define DEBUG            CHIMERA_DEBUG
 #define INFO             CHIMERA_INFO

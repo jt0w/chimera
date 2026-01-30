@@ -16,7 +16,6 @@
 #define CHIMERA_DA_FREE CHIMERA_FREE
 #endif
 
-
 #define CHIMERA_DA_STRUCT(type, name)                                          \
   typedef struct {                                                             \
     type *items;                                                               \
@@ -68,6 +67,8 @@
     (da)->count += (bufs_c);                                                   \
   } while (0)
 
+#define chimera_da_foreach(type, x, xs) for (type *x = xs.items; x < xs.items + xs.count; ++x)
+
 CHIMERA_DA_STRUCT(char, Chimera_StringBuilder);
 
 Chimera_StringBuilder chimera_sb_from_string(char *str);
@@ -75,7 +76,10 @@ Chimera_StringBuilder chimera_sb_from_string(char *str);
 #define chimera_da_free(da) CHIMERA_DA_FREE(da.items)
 
 typedef struct {
-  const char *data;
+  union {
+    const char *data;
+    char *items;
+  };
   size_t count;
 } Chimera_StringView;
 
