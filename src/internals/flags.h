@@ -1,4 +1,6 @@
-// Very limited cli flags parser
+/* Very limited cli flags parser
+ * Still a WIP
+*/
 #ifndef FLAGS_H
 #define FLAGS_H
 #include "da.h"
