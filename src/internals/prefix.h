@@ -54,6 +54,7 @@
 #define FLAG_COUNT CHIMERA_FLAG_COUNT
 #define FlagValue Chimera_FlagValue
 #define Flag Chimera_Flag
+#define Flags Chimera_Flags
 #define parse_flag chimera_parse_flag
 #define parse_boolean_flag chimera_parse_boolean_flag
 #define parse_str_flag chimera_parse_str_flag
