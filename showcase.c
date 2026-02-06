@@ -12,7 +12,6 @@ int main(int argc, char **argv) {
   const char *program_name = shift(argv, argc);
   Chimera_Flags flags = {0};
 
-  //                                      long name       short name   default
   Chimera_Flag help  = parse_boolean_flag(flags, "help"         , "h" ,       false, "Show list of all available commands");
   Chimera_Flag da    = parse_boolean_flag(flags, "dynamic_array", "da",       false, "Collect all following flags in a dynamic array");
   Chimera_Flag build = parse_boolean_flag(flags, "build"        , "b" ,       false, "build a c file");
