@@ -27,6 +27,7 @@
 #define sb_push_buf			chimera_sb_push_buf
 #define sb_push_mult		chimera_sb_push_mult
 #define sb_foreach(x, xs)	chimera_da_foreach(char, (x), (xs))
+#define sb_pushf			chimera_sb_pushf
 #define StringView			Chimera_StringView
 #define sv_from_string		chimera_sv_from_string
 #define sv_from_data		chimera_sv_from_data
