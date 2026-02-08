@@ -1,10 +1,10 @@
 #ifndef _CHIMERA_DA_H_
 #define _CHIMERA_DA_H_
 #include <ctype.h>
-#include <stddef.h>
-#include <string.h>
 #include <stdarg.h>
+#include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 
 #ifndef CHIMERA_INIT_DA_CAP
 #define CHIMERA_INIT_DA_CAP 256
@@ -18,58 +18,59 @@
 #define CHIMERA_DA_FREE CHIMERA_FREE
 #endif
 
-#define CHIMERA_DA_STRUCT(type, name)			\
-  typedef struct {								\
-	type *items;								\
-	size_t count;								\
-	size_t cap;									\
+#define CHIMERA_DA_STRUCT(type, name)                                          \
+  typedef struct {                                                             \
+    type *items;                                                               \
+    size_t count;                                                              \
+    size_t cap;                                                                \
   } name;
 
 #define chimera_da_len(da) ((da).count)
 
 #define chimera_da_get(da, i) (assert(i < chimera_da_len(da)), da[i])
 
-#define chimera_da_push(da, item)											\
-  do {																		\
-	if ((da)->count >= (da)->cap) {											\
-	  (da)->cap = (da)->cap == 0 ? CHIMERA_INIT_DA_CAP : (da)->cap * 2;		\
-	  (da)->items =															\
-		CHIMERA_DA_REALLOC((da)->items, (da)->cap * sizeof(*(da)->items));	\
-	  assert((da)->items != NULL && "You broke or what?");					\
-	}																		\
-																			\
-	(da)->items[(da)->count++] = (item);									\
+#define chimera_da_push(da, item)                                              \
+  do {                                                                         \
+    if ((da)->count >= (da)->cap) {                                            \
+      (da)->cap = (da)->cap == 0 ? CHIMERA_INIT_DA_CAP : (da)->cap * 2;        \
+      (da)->items =                                                            \
+          CHIMERA_DA_REALLOC((da)->items, (da)->cap * sizeof(*(da)->items));   \
+      assert((da)->items != NULL && "You broke or what?");                     \
+    }                                                                          \
+                                                                               \
+    (da)->items[(da)->count++] = (item);                                       \
   } while (0)
 
-#define chimera_da_push_sized_buf(da, buf, buf_sz)	\
-  do {												\
-	for (size_t i = 0; i < buf_sz; ++i) {			\
-	  chimera_da_push(da, buf[i]);					\
-	}												\
+#define chimera_da_push_sized_buf(da, buf, buf_sz)                             \
+  do {                                                                         \
+    for (size_t i = 0; i < buf_sz; ++i) {                                      \
+      chimera_da_push(da, buf[i]);                                             \
+    }                                                                          \
   } while (0)
 
-#define chimera_da_push_buf(da, buf)				\
+#define chimera_da_push_buf(da, buf)                                           \
   chimera_da_push_sized_buf(da, buf, strlen(buf))
 
-#define chimera_da_push_mult(da, bufs, bufs_c)								\
-  do {																		\
-	if ((da)->count + bufs_c > (da)->cap) {									\
-	  if ((da)->cap == 0) {													\
-		(da)->cap = CHIMERA_INIT_DA_CAP;									\
-	  }																		\
-	  while ((da)->count + bufs_c > (da)->cap) {							\
-		(da)->cap *= 2;														\
-	  }																		\
-	  (da)->items =															\
-		CHIMERA_DA_REALLOC((da)->items, (da)->cap * sizeof(*(da)->items));	\
-	  assert((da)->items != NULL);											\
-	}																		\
-	memcpy((da)->items + (da)->count, (bufs),								\
-		   (bufs_c) * sizeof(*(da)->items));								\
-	(da)->count += (bufs_c);												\
+#define chimera_da_push_mult(da, bufs, bufs_c)                                 \
+  do {                                                                         \
+    if ((da)->count + bufs_c > (da)->cap) {                                    \
+      if ((da)->cap == 0) {                                                    \
+        (da)->cap = CHIMERA_INIT_DA_CAP;                                       \
+      }                                                                        \
+      while ((da)->count + bufs_c > (da)->cap) {                               \
+        (da)->cap *= 2;                                                        \
+      }                                                                        \
+      (da)->items =                                                            \
+          CHIMERA_DA_REALLOC((da)->items, (da)->cap * sizeof(*(da)->items));   \
+      assert((da)->items != NULL);                                             \
+    }                                                                          \
+    memcpy((da)->items + (da)->count, (bufs),                                  \
+           (bufs_c) * sizeof(*(da)->items));                                   \
+    (da)->count += (bufs_c);                                                   \
   } while (0)
 
-#define chimera_da_foreach(type, x, xs) for (type *x = xs.items; x < xs.items + xs.count; ++x)
+#define chimera_da_foreach(type, x, xs)                                        \
+  for (type *x = xs.items; x < xs.items + xs.count; ++x)
 
 CHIMERA_DA_STRUCT(char, Chimera_StringBuilder);
 
@@ -113,8 +114,8 @@ Chimera_StringViews chimera_sv_split_by_char(Chimera_StringView sv, char sep);
 
 Chimera_StringBuilder chimera_sb_from_string(char *str) {
   return (Chimera_StringBuilder){
-	.items = str,
-	.count = strlen(str),
+      .items = str,
+      .count = strlen(str),
   };
 }
 
@@ -125,14 +126,14 @@ void chimera_sb_pushf(Chimera_StringBuilder *sb, const char *fmt, ...) {
   va_end(args);
 
   if (sb->count + n + 1 > sb->cap) {
-	if (sb->cap == 0) {
-	  sb->cap = CHIMERA_INIT_DA_CAP;
-	}
-	while (sb->count + n + 1 > sb->cap) {
-	  sb->cap *= 2;
-	}
-	sb->items = CHIMERA_DA_REALLOC(sb->items, sb->cap * sizeof(*sb->items));
-	assert(sb->items != NULL);
+    if (sb->cap == 0) {
+      sb->cap = CHIMERA_INIT_DA_CAP;
+    }
+    while (sb->count + n + 1 > sb->cap) {
+      sb->cap *= 2;
+    }
+    sb->items = CHIMERA_DA_REALLOC(sb->items, sb->cap * sizeof(*sb->items));
+    assert(sb->items != NULL);
   }
   char *dest = sb->items + sb->count;
   va_start(args, fmt);
@@ -143,29 +144,29 @@ void chimera_sb_pushf(Chimera_StringBuilder *sb, const char *fmt, ...) {
 
 Chimera_StringView chimera_sv_from_string(const char *str) {
   return (Chimera_StringView){
-	.data = str,
-	.count = strlen(str),
+      .data = str,
+      .count = strlen(str),
   };
 }
 
 Chimera_StringView chimera_sv_from_data(const char *str, size_t count) {
   return (Chimera_StringView){
-	.data = str,
-	.count = count,
+      .data = str,
+      .count = count,
   };
 }
 
 Chimera_StringView chimera_sv_trim_left(Chimera_StringView sv) {
   size_t i = 0;
   while (isspace(sv.data[i]))
-	i++;
+    i++;
   return chimera_sv_from_data(sv.data + i, sv.count - i);
 }
 
 Chimera_StringView chimera_sv_trim_right(Chimera_StringView sv) {
   size_t i = 0;
   while (isspace(sv.data[sv.count - i]))
-	i++;
+    i++;
   return chimera_sv_from_data(sv.data, sv.count - i);
 }
 
@@ -182,17 +183,17 @@ Chimera_StringViews chimera_sv_split_by_char(Chimera_StringView sv, char sep) {
   size_t last = 0;
   size_t i = 0;
   for (; i <= sv.count; ++i) {
-	if (sv.data[i] == sep) {
-	  chimera_da_push(&svs,
-					  chimera_sv_from_data(sv.data + last + (last == 0 ? 0 : 1),
-										   i - last - (last == 0 ? 0 : 1)));
-	  last = i;
-	  continue;
-	}
+    if (sv.data[i] == sep) {
+      chimera_da_push(&svs,
+                      chimera_sv_from_data(sv.data + last + (last == 0 ? 0 : 1),
+                                           i - last - (last == 0 ? 0 : 1)));
+      last = i;
+      continue;
+    }
   }
   chimera_da_push(&svs,
-				  chimera_sv_from_data(sv.data + last + (last == 0 ? 0 : 1),
-									   i - last - (last == 0 ? 0 : 1)));
+                  chimera_sv_from_data(sv.data + last + (last == 0 ? 0 : 1),
+                                       i - last - (last == 0 ? 0 : 1)));
   return svs;
 }
 

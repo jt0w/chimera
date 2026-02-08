@@ -1,7 +1,7 @@
 #ifndef _CHIMERA_UTILS_H_
 #define _CHIMERA_UTILS_H_
-#include "defs.h"
 #include "da.h"
+#include "defs.h"
 #include <assert.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -17,17 +17,17 @@
 #define chimera_array_len(xs) (sizeof(xs) / sizeof(*xs))
 
 #ifndef CHIMERA_NO_COLOR_LOG
-  #define CHIMERA_COLOR_TEXT "\x1B[0m"
-  #define CHIMERA_COLOR_ERROR "\x1B[31m"
-  #define CHIMERA_COLOR_INFO "\x1B[32m"
-  #define CHIMERA_COLOR_WARN "\x1B[33m"
-  #define CHIMERA_COLOR_TRACE "\x1B[34m"
+#define CHIMERA_COLOR_TEXT  "\x1B[0m"
+#define CHIMERA_COLOR_ERROR "\x1B[31m"
+#define CHIMERA_COLOR_INFO  "\x1B[32m"
+#define CHIMERA_COLOR_WARN  "\x1B[33m"
+#define CHIMERA_COLOR_TRACE "\x1B[34m"
 #else // CHIMERA_NO_COLOR_LOG
-  #define CHIMERA_COLOR_TEXT ""
-  #define CHIMERA_COLOR_ERROR ""
-  #define CHIMERA_COLOR_INFO ""
-  #define CHIMERA_COLOR_WARN ""
-  #define CHIMERA_COLOR_TRACE ""
+#define CHIMERA_COLOR_TEXT  ""
+#define CHIMERA_COLOR_ERROR ""
+#define CHIMERA_COLOR_INFO  ""
+#define CHIMERA_COLOR_WARN  ""
+#define CHIMERA_COLOR_TRACE ""
 #endif // CHIMERA_NO_COLOR_LOG
 
 typedef enum {
@@ -101,7 +101,8 @@ void println(const char *fmt, ...) {
 
 bool chimera_read_file(char *filename, Chimera_StringBuilder *sb) {
   FILE *f = fopen(filename, "r");
-  if (f == NULL) return false;
+  if (f == NULL)
+    return false;
   char c;
   while ((c = fgetc(f)) != EOF) {
     chimera_da_push(sb, c);
