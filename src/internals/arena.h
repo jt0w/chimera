@@ -1,3 +1,4 @@
+// 08/02/2026: TODO/NOTE: Look into making the allocations aligned by pages
 #ifndef CHIMERA_ARENA_H
 #define CHIMERA_ARENA_H
 #include <stdlib.h>
