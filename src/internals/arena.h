@@ -1,4 +1,4 @@
-// 08/02/2026: TODO/NOTE: Look into making the allocations aligned by pages
+// 08/02/2026: TODO: Look into making the allocations aligned by pages
 #ifndef CHIMERA_ARENA_H
 #define CHIMERA_ARENA_H
 #include <stdlib.h>
@@ -12,6 +12,8 @@ typedef struct {
 Chimera_Arena chimera_arena_create(size_t cap);
 void chimera_arena_destroy(Chimera_Arena *arena);
 void *chimera_arena_alloc(Chimera_Arena *arena, size_t size);
+
+void *chimera_arena_strdup(Chimera_Arena *arena, char *str);
 
 #ifdef CHIMERA_IMPLEMENTATION
 Chimera_Arena chimera_arena_create(size_t cap) {
@@ -37,6 +39,11 @@ void *chimera_arena_alloc(Chimera_Arena *arena, size_t size) {
   void *out = arena->buf + arena->pos;
   arena->pos += size;
   return out;
+}
+
+void *chimera_arena_strdup(Chimera_Arena *arena, char *str) {
+  char *duped = chimera_arena_alloc(arena, strlen(str));
+  return duped == NULL ? NULL : memcpy(duped, str, strlen(str));
 }
 #endif // CHIMERA_IMPLEMENTATION
 #endif // endif CHIMERA_ARENA_H

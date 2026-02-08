@@ -71,5 +71,6 @@
 #define arena_create       chimera_arena_create
 #define arena_destroy      chimera_arena_destroy
 #define arena_alloc        chimera_arena_alloc
+#define arena_strdup       chimera_arena_strdup
 #endif
 #endif // _             CHIMERA_PREFIX_H_
