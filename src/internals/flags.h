@@ -62,6 +62,9 @@ Chimera_Flag chimera_parse_flag(Chimera_Flags *flags, char **argv, int argc,
                      CHIMERA_FLAG_INT,                                         \
                      (Chimera_FlagValue){.num_int = (default)}, desc)
 
+bool chimera_flags_check(Chimera_Flags flags);
+void chimera_flags_err_str(Chimera_Flags flags, Chimera_StringBuilder *sb);
+
 void chimera_print_flags_help(Chimera_Flags flags);
 
 #ifdef CHIMERA_IMPLEMENTATION
@@ -76,7 +79,6 @@ Chimera_Flag chimera_parse_flag(Chimera_Flags *flags, char **argv, int argc,
   flag.long_name = long_name;
   flag.short_name = short_name;
   flag.desc = desc;
-  chimera_da_push(flags, flag);
   for (size_t i = 0; i < argc; ++i) {
     if (strcmp(argv[i], long_name) == 0 || strcmp(argv[i], short_name) == 0) {
       flag.pos = i;
@@ -84,30 +86,23 @@ Chimera_Flag chimera_parse_flag(Chimera_Flags *flags, char **argv, int argc,
         flag.as.boolean = !default_value.boolean;
         return flag;
       }
-      if (argc == 0) {
-        flag.type = CHIMERA_FLAG_ERROR;
+      if (i + 1 >= argc) {
         flag.as.error = "Expected value";
-        return flag;
+        goto fail;
       }
       char *arg = argv[++i];
       assert(CHIMERA_FLAG_COUNT == 4);
       switch (type) {
       case CHIMERA_FLAG_STRING:
-        if (arg[0] == '"' && arg[strlen(arg) - 1] != '"') {
-          flag.type = CHIMERA_FLAG_ERROR;
-          flag.as.error = chimera_temp_sprintf("String not terminated", arg);
-          return flag;
-        }
         flag.as.str = arg;
         return flag;
       case CHIMERA_FLAG_INT:
         errno = 0;
         flag.as.num_int = strtol(arg, NULL, 10);
         if (errno != 0) {
-          flag.type = CHIMERA_FLAG_ERROR;
           flag.as.error =
               chimera_temp_sprintf("failed to parse ´%s´ as int", arg);
-          return flag;
+          goto fail;
         }
         return flag;
       default:
@@ -116,7 +111,12 @@ Chimera_Flag chimera_parse_flag(Chimera_Flags *flags, char **argv, int argc,
       }
     }
   }
+end:
+  chimera_da_push(flags, flag);
   return flag;
+fail:
+  flag.type = CHIMERA_FLAG_ERROR;
+  goto end;
 }
 
 void chimera_print_flags_help(Chimera_Flags flags) {
@@ -135,6 +135,21 @@ void chimera_print_flags_help(Chimera_Flags flags) {
   chimera_da_foreach(Chimera_Flag, flag, flags) {
     println("   %-*s | %-*s -> %s", max_short_len, flag->short_name,
             max_long_len, flag->long_name, flag->desc);
+  }
+}
+
+bool chimera_flags_check(Chimera_Flags flags) {
+  chimera_da_foreach(Chimera_Flag, flag, flags) {
+    if (flag->type == CHIMERA_FLAG_ERROR) return false;
+  }
+  return true;
+}
+
+void chimera_flags_err_str(Chimera_Flags flags, Chimera_StringBuilder *sb) {
+  chimera_da_foreach(Chimera_Flag, flag, flags) {
+    if (flag->type == CHIMERA_FLAG_ERROR){
+      chimera_sb_push_buf(sb, chimera_temp_sprintf("Option `%s`/`%s`: %s", flag->long_name, flag->short_name, flag->as.error));
+    }
   }
 }
 #endif // CHIMERA_IMPLEMENTATION

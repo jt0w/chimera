@@ -67,6 +67,8 @@
 #define parse_str_flag     chimera_parse_str_flag
 #define parse_int_flag     chimera_parse_int_flag
 #define print_flags_help   chimera_print_flags_help
+#define flags_check        chimera_flags_check
+#define flags_err_str      chimera_flags_err_str
 #define Arena              Chimera_Arena
 #define arena_create       chimera_arena_create
 #define arena_destroy      chimera_arena_destroy
