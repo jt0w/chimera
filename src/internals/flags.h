@@ -62,8 +62,9 @@ Chimera_Flag chimera_parse_flag(Chimera_Flags *flags, char **argv, int argc,
                      CHIMERA_FLAG_INT,                                         \
                      (Chimera_FlagValue){.num_int = (default)}, desc)
 
-bool chimera_flags_check(Chimera_Flags flags);
-void chimera_flags_err_str(Chimera_Flags flags, Chimera_StringBuilder *sb);
+bool chimera_flags_check(Chimera_Flags flags, int argc);
+void chimera_flags_err_str(Chimera_Flags flags, Chimera_StringBuilder *sb,
+                           char **argv, int argc);
 
 void chimera_print_flags_help(Chimera_Flags flags);
 
@@ -78,13 +79,14 @@ Chimera_Flag chimera_parse_flag(Chimera_Flags *flags, char **argv, int argc,
   flag.as = default_value;
   flag.long_name = long_name;
   flag.short_name = short_name;
+  flag.pos = -1;
   flag.desc = desc;
   for (size_t i = 0; i < argc; ++i) {
     if (strcmp(argv[i], long_name) == 0 || strcmp(argv[i], short_name) == 0) {
       flag.pos = i;
       if (type == CHIMERA_FLAG_BOOLEAN) {
         flag.as.boolean = !default_value.boolean;
-        return flag;
+        goto end;
       }
       if (i + 1 >= argc) {
         flag.as.error = "Expected value";
@@ -95,7 +97,7 @@ Chimera_Flag chimera_parse_flag(Chimera_Flags *flags, char **argv, int argc,
       switch (type) {
       case CHIMERA_FLAG_STRING:
         flag.as.str = arg;
-        return flag;
+        goto end;
       case CHIMERA_FLAG_INT:
         errno = 0;
         flag.as.num_int = strtol(arg, NULL, 10);
@@ -104,7 +106,7 @@ Chimera_Flag chimera_parse_flag(Chimera_Flags *flags, char **argv, int argc,
               chimera_temp_sprintf("failed to parse ´%s´ as int", arg);
           goto fail;
         }
-        return flag;
+        goto end;
       default:
         chimera_log(CHIMERA_ERROR, "UNREACHABLE: chimera_parse_flag");
         abort();
@@ -138,17 +140,62 @@ void chimera_print_flags_help(Chimera_Flags flags) {
   }
 }
 
-bool chimera_flags_check(Chimera_Flags flags) {
+bool chimera_flags_check(Chimera_Flags flags, int argc) {
+  int count = 0;
   chimera_da_foreach(Chimera_Flag, flag, flags) {
-    if (flag->type == CHIMERA_FLAG_ERROR) return false;
+    if (flag->type == CHIMERA_FLAG_ERROR)
+      return false;
+    if (flag->pos == -1)
+      continue;
+    switch (flag->type) {
+    case CHIMERA_FLAG_STRING:
+      count += 2;
+      break;
+    case CHIMERA_FLAG_INT:
+      count += 2;
+      break;
+    case CHIMERA_FLAG_BOOLEAN:
+      count += 1;
+      break;
+    }
   }
-  return true;
+  return argc == count;
 }
 
-void chimera_flags_err_str(Chimera_Flags flags, Chimera_StringBuilder *sb) {
+void chimera_flags_err_str(Chimera_Flags flags, Chimera_StringBuilder *sb,
+                           char **argv, int argc) {
   chimera_da_foreach(Chimera_Flag, flag, flags) {
-    if (flag->type == CHIMERA_FLAG_ERROR){
-      chimera_sb_push_buf(sb, chimera_temp_sprintf("Option `%s`/`%s`: %s", flag->long_name, flag->short_name, flag->as.error));
+    if (flag->type == CHIMERA_FLAG_ERROR) {
+      chimera_sb_push_buf(
+          sb, chimera_temp_sprintf("Option `%s`/`%s`: %s", flag->long_name,
+                                   flag->short_name, flag->as.error));
+    }
+  }
+
+  for (size_t i = 0; i < argc;) {
+    const char *arg = argv[i];
+    bool found = false;
+    chimera_da_foreach(Chimera_Flag, flag, flags) {
+      if (strcmp(arg, flag->long_name) == 0 ||
+          strcmp(arg, flag->short_name) == 0) {
+        found = true;
+        switch (flag->type) {
+        case CHIMERA_FLAG_STRING:
+          i += 2;
+          break;
+        case CHIMERA_FLAG_INT:
+          i += 2;
+          break;
+        case CHIMERA_FLAG_BOOLEAN:
+          i += 1;
+          break;
+        }
+        break;
+      }
+    }
+    if (!found) {
+      chimera_sb_push_buf(sb, chimera_temp_sprintf("Unknown option `%s`", arg));
+      return;
     }
   }
 }

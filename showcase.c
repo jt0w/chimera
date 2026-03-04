@@ -12,11 +12,19 @@ int main(int argc, char **argv) {
   const char *program_name = shift(argv, argc);
   Chimera_Flags flags = {0};
 
-  Chimera_Flag help  = parse_boolean_flag(flags, "help"         , "h" ,       false, "Show list of all available commands");
-  Chimera_Flag da    = parse_boolean_flag(flags, "dynamic_array", "da",       false, "Collect all following flags in a dynamic array");
-  Chimera_Flag build = parse_boolean_flag(flags, "build"        , "b" ,       false, "build a c file");
-  Chimera_Flag read  = parse_boolean_flag(flags, "read"         , "r" ,       false, "read a file");
-  Chimera_Flag split = parse_boolean_flag(flags, "split"        , "s" ,       false, "split a file by spaces");
+  Chimera_Flag help  = parse_boolean_flag(flags, "help"         , "h" ,           false, "Show list of all available commands");
+  Chimera_Flag da    = parse_str_flag    (flags, "dynamic_array", "da",           NULL,  "Collect all following flags in a dynamic array");
+  Chimera_Flag build = parse_str_flag    (flags, "build"        , "b" ,           NULL,  "build a c file");
+  Chimera_Flag read  = parse_str_flag    (flags, "read"         , "r" ,           NULL,  "read a file");
+  Chimera_Flag split = parse_str_flag    (flags, "split"        , "s" ,           NULL,  "split a file by spaces");
+
+  if (!flags_check(flags, argc)) {
+    StringBuilder sb = {0};
+    flags_err_str(flags, &sb, argv, argc);
+    log(ERROR, "%s", sb.items);
+    da_free(sb);
+    return 1;
+  }
 
   if (help.as.boolean) {
     chimera_print_flags_help(flags);
